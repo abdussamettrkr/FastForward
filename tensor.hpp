@@ -1,7 +1,7 @@
+#include <vector>
+
 class Tensor{
     public:
-        Tensor(unsigned int rows, unsigned int cols);        
-
         static Tensor ones(unsigned int rows, unsigned int cols);
         static Tensor zeros(unsigned int rows, unsigned int cols);
         //static Tensor randn(unsigned int rows, unsigned int cols);
@@ -13,23 +13,25 @@ class Tensor{
 
         
         Tensor operator +(const Tensor &other);
-        Tensor operator +(const float value);
-        Tensor operator +(const int value);
+        template <typename T>
+        Tensor operator +(T value);
         Tensor operator -(const Tensor &other);
-        Tensor operator -(const float value);
-        Tensor operator -(const int value);
+        template <typename T>
+        Tensor operator -(T value);
         Tensor operator /(const Tensor &other);
-        Tensor operator /(const float value);
-        Tensor operator /(const int value);
+        template <typename T>
+        Tensor operator /(T value);
         Tensor operator *(const Tensor &other);
-        Tensor operator *(const float value);
-        Tensor operator *(const int value);
+        template <typename T>
+        Tensor operator *(T value);
 
 
     private:
         float* m_data;  
+        std::vector <unsigned int> m_shape;
         unsigned int m_rows;
         unsigned int m_cols;
+        unsigned int n_dim;
 
         Tensor(unsigned int rows, unsigned int cols, float* data);
 
@@ -38,11 +40,15 @@ class Tensor{
 
 };
 
-Tensor::Tensor(unsigned int rows, unsigned int cols){
-    m_data = new float[rows*cols];
+Tensor::Tensor(std::vector <unsigned int> shape){
+    std::vector<unsigned int> m_shape(shape);
+    unsigned int total_size = 0;
+    for (int i=0; i < m_shape.size(); i++)
+    {
+        total_size += m_shape[i];
+    }
 
-    m_rows = rows;
-    m_cols = cols;
+    m_data = new float[total_size];    
 }
 
 Tensor::Tensor(unsigned int rows, unsigned int cols, float* data){
@@ -86,7 +92,8 @@ Tensor Tensor::operator+(const Tensor &other){
     return *this;
 }
 
-Tensor Tensor::operator+(const int value){
+template <typename T>
+Tensor Tensor::operator+(T value){
     int total_size = size();
     for(int i = 0; i < total_size; i++){
         m_data[i] += value;
@@ -95,14 +102,6 @@ Tensor Tensor::operator+(const int value){
     return *this;
 }
 
-Tensor Tensor::operator+(const float value){
-    int total_size = size();
-    for(int i = 0; i < total_size; i++){
-        m_data[i] += value;
-    }
-
-    return *this;
-}
 
 Tensor Tensor::operator-(const Tensor &other){
     int total_size = size();
@@ -113,7 +112,8 @@ Tensor Tensor::operator-(const Tensor &other){
     return *this;
 }
 
-Tensor Tensor::operator-(const int value){
+template <typename T>
+Tensor Tensor::operator-(T value){
     int total_size = size();
     for(int i = 0; i < total_size; i++){
         m_data[i] -= value;
@@ -121,16 +121,6 @@ Tensor Tensor::operator-(const int value){
 
     return *this;
 }
-
-Tensor Tensor::operator-(const float value){
-    int total_size = size();
-    for(int i = 0; i < total_size; i++){
-        m_data[i] -= value;
-    }
-
-    return *this;
-}
-
 
 Tensor Tensor::operator*(const Tensor &other){
     int total_size = size();
@@ -141,16 +131,8 @@ Tensor Tensor::operator*(const Tensor &other){
     return *this;
 }
 
-Tensor Tensor::operator*(const int value){
-    int total_size = size();
-    for(int i = 0; i < total_size; i++){
-        m_data[i] *= value;
-    }
-
-    return *this;
-}
-
-Tensor Tensor::operator*(const float value){
+template <typename T>
+Tensor Tensor::operator*(T value){
     int total_size = size();
     for(int i = 0; i < total_size; i++){
         m_data[i] *= value;
@@ -168,16 +150,8 @@ Tensor Tensor::operator/(const Tensor &other){
     return *this;
 }
 
-Tensor Tensor::operator/(const int value){
-    int total_size = size();
-    for(int i = 0; i < total_size; i++){
-        m_data[i] /= value;
-    }
-
-    return *this;
-}
-
-Tensor Tensor::operator/(const float value){
+template <typename T>
+Tensor Tensor::operator/(T value){
     int total_size = size();
     for(int i = 0; i < total_size; i++){
         m_data[i] /= value;
