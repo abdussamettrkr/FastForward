@@ -1,22 +1,27 @@
 #pragma once
 
-#include <vector>
 #include <iostream>
-
+#include "shape.hpp"
 
 class Tensor{
     public:
         // ~Tensor() {
         //     free(m_data);
         // }
-        static Tensor ones(unsigned int rows, unsigned int cols);
-        static Tensor zeros(unsigned int rows, unsigned int cols);
+
+        template<typename Iterable>
+        static Tensor ones(Iterable &arraylike);
+        static Tensor ones(std::initializer_list<int> arraylike);
+        template<typename Iterable>
+        static Tensor zeros(Iterable &arraylike);
+        static Tensor zeros(std::initializer_list<int> arraylike);
+
         //static Tensor randn(unsigned int rows, unsigned int cols);
         
 
         float* data() const;
 
-        //Shape* shape(); # Must be implemented 
+        Shape* shape();
 
         
         Tensor operator +(const Tensor &other);
@@ -35,12 +40,12 @@ class Tensor{
 
     private:
         float* m_data;  
-        std::vector <unsigned int> m_shape;
-        unsigned int m_rows;
-        unsigned int m_cols;
-        unsigned int n_dim;
+        Shape* m_shape;
 
-        Tensor(unsigned int rows, unsigned int cols, float* data);
+        template<typename Iterable>
+        Tensor(Iterable &arraylike, float* data);
 
         int size();
 };
+
+#include "tensor.tpp"
