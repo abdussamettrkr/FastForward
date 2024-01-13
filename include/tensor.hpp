@@ -19,18 +19,21 @@ public:
 
     Shape *shape();
 
-    Tensor operator+(const Tensor &other);
     template <typename T>
     Tensor operator+(T value);
-    Tensor operator-(const Tensor &other);
+    Tensor operator+(const Tensor &other);
+
     template <typename T>
     Tensor operator-(T value);
-    Tensor operator/(const Tensor &other);
+    Tensor operator-(const Tensor &other);
+
     template <typename T>
     Tensor operator/(T value);
-    Tensor operator*(const Tensor &other);
+    Tensor operator/(const Tensor &other);
+
     template <typename T>
     Tensor operator*(T value);
+    Tensor operator*(const Tensor &other);
 
 private:
     float *m_data;
@@ -41,3 +44,52 @@ private:
 
     int size();
 };
+
+// Template functions definition
+template <typename T>
+Tensor Tensor::operator+(T value)
+{
+    int total_size = size();
+    for (int i = 0; i < total_size; i++)
+    {
+        m_data[i] += value;
+    }
+
+    return *this;
+}
+
+template <typename T>
+Tensor Tensor::operator-(T value)
+{
+    int total_size = size();
+    for (int i = 0; i < total_size; i++)
+    {
+        m_data[i] -= value;
+    }
+
+    return *this;
+}
+
+template <typename T>
+Tensor Tensor::operator/(T value)
+{
+    int total_size = size();
+    for (int i = 0; i < total_size; i++)
+    {
+        m_data[i] /= value;
+    }
+
+    return *this;
+}
+
+template <typename T>
+Tensor Tensor::operator*(T value)
+{
+    int total_size = size();
+    for (int i = 0; i < total_size; i++)
+    {
+        m_data[i] *= value;
+    }
+
+    return *this;
+}

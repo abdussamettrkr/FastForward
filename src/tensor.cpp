@@ -45,59 +45,12 @@ Tensor Tensor::operator+(const Tensor &other)
     return *this;
 }
 
-template <typename T>
-Tensor Tensor::operator+(T value)
-{
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] += value;
-    }
-
-    return *this;
-}
-
 Tensor Tensor::operator-(const Tensor &other)
 {
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
         m_data[i] -= other.data()[i];
-    }
-
-    return *this;
-}
-
-template <typename T>
-Tensor Tensor::operator-(T value)
-{
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] -= value;
-    }
-
-    return *this;
-}
-
-Tensor Tensor::operator*(const Tensor &other)
-{
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] *= other.data()[i];
-    }
-
-    return *this;
-}
-
-template <typename T>
-Tensor Tensor::operator*(T value)
-{
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] *= value;
     }
 
     return *this;
@@ -114,13 +67,12 @@ Tensor Tensor::operator/(const Tensor &other)
     return *this;
 }
 
-template <typename T>
-Tensor Tensor::operator/(T value)
+Tensor Tensor::operator*(const Tensor &other)
 {
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
-        m_data[i] /= value;
+        m_data[i] *= other.data()[i];
     }
 
     return *this;

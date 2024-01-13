@@ -1,5 +1,4 @@
-#include "tensor.hpp" // let it be cpp for now
-#include <iostream>
+#include "tensor.hpp"
 
 int main()
 {
