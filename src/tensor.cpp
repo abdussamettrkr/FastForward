@@ -21,7 +21,7 @@ Tensor Tensor::ones(std::initializer_list<int> arraylike)
 
 Tensor Tensor::zeros(std::initializer_list<int> arraylike)
 {
-    return Tensor::ones<decltype(arraylike)>(arraylike);
+    return Tensor::zeros<decltype(arraylike)>(arraylike);
 }
 
 float *Tensor::data() const
@@ -31,7 +31,10 @@ float *Tensor::data() const
 
 int Tensor::size() { return m_shape->size(); };
 
-Shape *Tensor::shape() { return m_shape; }
+Shape *Tensor::shape() const
+{
+    return m_shape;
+}
 
 // We will perform operations inplace!
 Tensor Tensor::operator+(const Tensor &other)
@@ -97,4 +100,32 @@ Tensor Tensor::zeros(Iterable &arraylike)
         *(data + i) = 0;
     }
     return Tensor(arraylike, data);
+}
+
+Tensor Tensor::matmul(const Tensor &other)
+{
+    int t1_h = (*this->shape())[0];
+    int t1_w = (*this->shape())[1];
+    int t2_h = (*other.shape())[0];
+    int t2_w = (*other.shape())[1];
+
+    if (this->shape()->ndims() != 2 || other.shape()->ndims() != 2)
+        throw std::invalid_argument("Matmul currently support only 2 dim tensors");
+
+    if (t1_w != t2_h)
+        throw std::invalid_argument("The ncols of the first tensor must be equal nrows! second tensor");
+
+    Tensor result = zeros({t1_h, t2_w});
+
+    for (int row = 0; row < t1_h; row++)
+    {
+        for (int col = 0; col < t2_w; col++)
+        {
+            for (int inner = 0; inner < t1_w; inner++)
+            {
+                result.data()[row * t1_h + col] += this->data()[row * t1_w + inner] * other.data()[t2_w * inner + col];
+            }
+        }
+    }
+    return result;
 }

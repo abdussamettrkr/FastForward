@@ -6,6 +6,8 @@
 class Tensor
 {
 public:
+    Shape *shape() const;
+
     template <typename Iterable>
     static Tensor ones(Iterable &arraylike);
     static Tensor ones(std::initializer_list<int> arraylike);
@@ -14,10 +16,6 @@ public:
     static Tensor zeros(std::initializer_list<int> arraylike);
 
     //static Tensor randn(unsigned int rows, unsigned int cols);
-
-    float *data() const;
-
-    Shape *shape();
 
     template <typename T>
     Tensor operator+(T value);
@@ -34,6 +32,10 @@ public:
     template <typename T>
     Tensor operator*(T value);
     Tensor operator*(const Tensor &other);
+
+    Tensor matmul(const Tensor &other);
+
+    float *data() const;
 
 private:
     float *m_data;

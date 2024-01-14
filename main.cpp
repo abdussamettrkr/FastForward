@@ -3,16 +3,13 @@
 int main()
 {
 
-    Tensor t = Tensor::ones({300, 400, 1000});
-    Tensor t2 = Tensor::ones({300, 400, 1000});
+    Tensor t = Tensor::ones({3, 3});
+    Tensor t2 = Tensor::ones({3, 3});
+    t.data()[0] = 5;
 
-    t = t + t2;
-
-    t = t + t;
-    t = t * 4.f;
-
-    t = t / 3.f;
+    Tensor t3 = t.matmul(t2);
     std::cout << "ekmek" << std::endl;
     std::cout << t.data()[0] << "|" << t.data()[1] << std::endl;
     std::cout << *(t.shape()) << std::endl;
+    std::cout << (*t.shape())[1] << std::endl;
 }

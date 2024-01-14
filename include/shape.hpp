@@ -6,23 +6,30 @@ class Shape
 {
 private:
     std::vector<int> shape;
-    int ndims;
-    int numel;
+    int numDimensions;
+    int totalElements;
 
 public:
     template <typename Iterable>
-    Shape(Iterable &arraylike)
-    {
-        this->ndims = 0;
-        this->numel = 1;
-        for (auto &dim : arraylike)
-        {
-            shape.push_back(dim);
-            ndims++;
-            numel *= dim;
-        }
-    }
-    std::vector<int> dims();
+    Shape(Iterable &arraylike);
+
+    int operator[](int index);
+
     int size();
+    std::vector<int> dims();
+    int ndims();
     friend std::ostream &operator<<(std::ostream &os, const Shape &obj);
 };
+
+template <typename Iterable>
+Shape::Shape(Iterable &arraylike)
+{
+    this->numDimensions = 0;
+    this->totalElements = 1;
+    for (auto &dim : arraylike)
+    {
+        shape.push_back(dim);
+        numDimensions++;
+        totalElements *= dim;
+    }
+}
