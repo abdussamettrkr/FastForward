@@ -1,4 +1,5 @@
 #include "tensor.hpp"
+#include "utils.cpp"
 
 template <typename Iterable>
 Tensor Tensor::ones(Iterable &arraylike)
@@ -104,26 +105,51 @@ Tensor Tensor::zeros(Iterable &arraylike)
 
 Tensor Tensor::matmul(const Tensor &other)
 {
-    int t1_h = (*this->shape())[0];
-    int t1_w = (*this->shape())[1];
-    int t2_h = (*other.shape())[0];
-    int t2_w = (*other.shape())[1];
+    std::vector<int> tensor1Shape = this->shape()->dims();
+    std::vector<int> tensor2Shape = other.shape()->dims();
 
-    if (this->shape()->ndims() != 2 || other.shape()->ndims() != 2)
+    if (tensor1Shape.size() < 2 || tensor2Shape.size() < 2)
         throw std::invalid_argument("Matmul currently support only 2 dim tensors");
 
-    if (t1_w != t2_h)
+    if (tensor1Shape[tensor1Shape.size() - 1] != tensor2Shape[tensor2Shape.size() - 2])
         throw std::invalid_argument("The ncols of the first tensor must be equal nrows! second tensor");
 
-    Tensor result = zeros({t1_h, t2_w});
+    if (!checkBroadcastable(*this, other))
+        throw std::invalid_argument("Given tensors are not compatiable for mutmul operation!");
 
-    for (int row = 0; row < t1_h; row++)
+    std::vector<Tensor> broadCastedTensors = broadCast(*this, other);
+    std::vector<int> resultShape;
+    std::vector<int> broadCastedShape = (*broadCastedTensors[0].shape()).dims();
+    int broadCastedDims = 1;
+    for (int i = 0; i < broadCastedTensors.size() - 2; i++)
     {
-        for (int col = 0; col < t2_w; col++)
+        resultShape.push_back(broadCastedShape[i]);
+    }
+
+    resultShape.push_back(tensor1Shape[tensor1Shape.size() - 2]);
+    resultShape.push_back(tensor2Shape.back());
+
+    Tensor result = zeros(broadCastedShape);
+
+    for (int i = 0; i < resultShape.size() - 2; i++)
+    {
+        broadCastedDims *= resultShape[i];
+    }
+
+    for (int i = 0; i < broadCastedDims; i++)
+    {
+        float *resultData = result.data() + (i * resultShape[resultShape.size() - 2] * resultShape.back());
+        float *t1Data = this->data();
+        float *t2Data = other.data();
+
+        for (int row = 0; row < resultShape[resultShape.size() - 2]; row++)
         {
-            for (int inner = 0; inner < t1_w; inner++)
+            for (int col = 0; col < resultShape.back(); col++)
             {
-                result.data()[row * t1_h + col] += this->data()[row * t1_w + inner] * other.data()[t2_w * inner + col];
+                for (int inner = 0; inner < tensor1Shape.back(); inner++)
+                {
+                    resultData[row * resultShape.back() + col] += t1Data[row * tensor1Shape.back() + inner] * t2Data[tensor2Shape.back() * inner + col];
+                }
             }
         }
     }
