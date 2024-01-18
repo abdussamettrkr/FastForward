@@ -10,6 +10,11 @@ std::vector<int> Shape::dims()
 
 std::ostream &operator<<(std::ostream &os, const Shape &obj)
 {
+    if(obj.shape.empty()){
+        os << "tensor.Shape([])";
+        return os;
+    }
+    auto x = obj.shape.begin();
     os << "tensor.Shape([";
     for (auto i = obj.shape.begin(); i < obj.shape.end() - 1; i++)
     {

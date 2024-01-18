@@ -17,6 +17,8 @@ public:
 
     //static Tensor randn(unsigned int rows, unsigned int cols);
 
+    Tensor();
+
     template <typename T>
     Tensor operator+(T value);
     Tensor operator+(const Tensor &other);
@@ -36,6 +38,10 @@ public:
     Tensor matmul(const Tensor &other);
 
     float *data() const;
+    Tensor getKernel(float* buffer, float* fromMat, int kernel_size, int i, int j);
+    float sum();
+
+    friend std::ostream &operator<<(std::ostream &os, Tensor &obj);
 
 private:
     float *m_data;
@@ -94,4 +100,18 @@ Tensor Tensor::operator*(T value)
     }
 
     return *this;
+}
+
+template <typename Iterable>
+Tensor Tensor::zeros(Iterable &arraylike)
+{
+    int n_zeros = 1;
+    for (auto &dim : arraylike)
+        n_zeros *= dim;
+    float *data = new float[n_zeros];
+    for (int i = 0; i < n_zeros; i++)
+    {
+        *(data + i) = 0;
+    }
+    return Tensor(arraylike, data);
 }

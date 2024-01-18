@@ -26,10 +26,13 @@ Shape::Shape(Iterable &arraylike)
 {
     this->numDimensions = 0;
     this->totalElements = 1;
+    bool isEmpty = true;
     for (auto &dim : arraylike)
     {
+        isEmpty = false;
         shape.push_back(dim);
         numDimensions++;
         totalElements *= dim;
     }
+    this->totalElements = (isEmpty) ? 0:totalElements;
 }

@@ -1,4 +1,5 @@
 #include "tensor.hpp"
+#include <string.h> 
 
 std::vector<int> squeezeVector(std::vector<int> inpVector)
 {
@@ -76,7 +77,7 @@ std::vector<Tensor> broadCast(const Tensor &t1, const Tensor &t2)
 
     for (int i = 0; i < targetSize / sourceSize; i++)
     {
-        std::memcpy(targetData + (i * sourceSize), sourceData, sourceSize);
+        memcpy(targetData + (i * sourceSize), sourceData, sourceSize);
     }
     result.push_back(broadCastedTensor);
 
