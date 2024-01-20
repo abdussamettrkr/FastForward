@@ -82,9 +82,30 @@ Tensor Tensor::operator*(const Tensor &other)
     return *this;
 }
 
+bool Tensor::operator==(const Tensor &other){
+    // TODO: instead of bool, return same shape bool Tensor
+    if(this->shape()->dims() != other.shape()->dims())
+        throw("Tensor shapes must be equal!");
+    
+    for (size_t i = 0; i < this->shape()->size(); i++)
+        if (std::abs(data()[i] - other.data()[i]) > EPSILON){
+            std::cout <<"wrong one iss:" <<i << std::endl;
+            return false;
+        }
+            
+
+    return true;
+}
+
 template <typename Iterable>
 Tensor::Tensor(Iterable &arraylike, float *data)
 {
+    m_data = data;
+    this->m_shape = new Shape(arraylike);
+
+}
+
+Tensor::Tensor(std::initializer_list<int> arraylike, float *data){
     m_data = data;
     this->m_shape = new Shape(arraylike);
 }
@@ -105,8 +126,8 @@ Tensor Tensor::zeros(Iterable &arraylike)
 
 Tensor Tensor::matmul(const Tensor &other)
 {
-    std::vector<int> tensor1Shape = this->shape()->dims();
-    std::vector<int> tensor2Shape = other.shape()->dims();
+    std::vector<int> tensor1Shape = squeezeShape(this->shape()->dims());
+    std::vector<int> tensor2Shape = squeezeShape(other.shape()->dims());
 
     if (tensor1Shape.size() < 2 || tensor2Shape.size() < 2)
         throw std::invalid_argument("Matmul currently support only 2 dim tensors");
@@ -117,41 +138,41 @@ Tensor Tensor::matmul(const Tensor &other)
     if (!checkBroadcastable(*this, other))
         throw std::invalid_argument("Given tensors are not compatiable for mutmul operation!");
 
-    std::vector<Tensor> broadCastedTensors = broadCast(*this, other);
+    size_t M = tensor1Shape.at(tensor1Shape.size() - 2);
+    size_t N = tensor1Shape.back();
+    size_t K = tensor2Shape.back();
+
     std::vector<int> resultShape;
-    std::vector<int> broadCastedShape = (*broadCastedTensors[0].shape()).dims();
+    if (tensor1Shape.size() >= tensor2Shape.size())
+        resultShape = tensor1Shape;
+    else
+        resultShape = tensor2Shape;
+
+    resultShape.at(resultShape.size() - 2) = M;
+    resultShape.back() = K;
+
     int broadCastedDims = 1;
-    for (int i = 0; i < broadCastedTensors.size() - 2; i++)
-    {
-        resultShape.push_back(broadCastedShape[i]);
-    }
-
-    resultShape.push_back(tensor1Shape[tensor1Shape.size() - 2]);
-    resultShape.push_back(tensor2Shape.back());
-
-    Tensor result = zeros(broadCastedShape);
-
     for (int i = 0; i < resultShape.size() - 2; i++)
-    {
         broadCastedDims *= resultShape[i];
-    }
+
+    int t1ExtraDims, t2ExtraDims = 1;
+    for (int i = 0; i < tensor1Shape.size() - 2; i++)
+        t1ExtraDims *= tensor1Shape[i];
+    for (int i = 0; i < tensor2Shape.size() - 2; i++)
+        t2ExtraDims *= tensor2Shape[i];
+
+    Tensor result = zeros(resultShape);
 
     for (int i = 0; i < broadCastedDims; i++)
     {
-        float *resultData = result.data() + (i * resultShape[resultShape.size() - 2] * resultShape.back());
-        float *t1Data = this->data();
-        float *t2Data = other.data();
+        float *t1Data = this->data() + ((i % t1ExtraDims) * M * N);
+        float *t2Data = other.data() + ((i % t2ExtraDims) * M * K);
+        float *resultData = result.data() + (i * M * K);
 
         for (int row = 0; row < resultShape[resultShape.size() - 2]; row++)
-        {
             for (int col = 0; col < resultShape.back(); col++)
-            {
                 for (int inner = 0; inner < tensor1Shape.back(); inner++)
-                {
-                    resultData[row * resultShape.back() + col] += t1Data[row * tensor1Shape.back() + inner] * t2Data[tensor2Shape.back() * inner + col];
-                }
-            }
-        }
+                    resultData[row * K + col] += t1Data[row * N + inner] * t2Data[K * inner + col];
     }
     return result;
 }
