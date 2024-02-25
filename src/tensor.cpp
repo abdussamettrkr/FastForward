@@ -1,6 +1,8 @@
 #include "tensor.hpp"
+#include "primitives.hpp"
 #include "utils.cpp"
 
+namespace core{
 template <typename Iterable>
 Tensor Tensor::ones(Iterable &arraylike)
 {
@@ -30,7 +32,7 @@ float *Tensor::data() const
     return m_data;
 }
 
-int Tensor::size() { return m_shape->size(); };
+int Tensor::size() const{ return m_shape->size(); };
 
 Shape *Tensor::shape() const
 {
@@ -97,6 +99,10 @@ bool Tensor::operator==(const Tensor &other){
     return true;
 }
 
+float& Tensor::operator[](int idx){
+    return m_data[idx];
+}
+
 template <typename Iterable>
 Tensor::Tensor(Iterable &arraylike, float *data)
 {
@@ -108,6 +114,10 @@ Tensor::Tensor(Iterable &arraylike, float *data)
 Tensor::Tensor(std::initializer_list<int> arraylike, float *data){
     m_data = data;
     this->m_shape = new Shape(arraylike);
+}
+
+Tensor::Tensor(const std::vector<Tensor>& _inputs, Primitive _op){
+    throw std::logic_error("Not implemented");
 }
 
 template <typename Iterable>
@@ -175,4 +185,5 @@ Tensor Tensor::matmul(const Tensor &other)
                     resultData[row * K + col] += t1Data[row * N + inner] * t2Data[K * inner + col];
     }
     return result;
+}
 }

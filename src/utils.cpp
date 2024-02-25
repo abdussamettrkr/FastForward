@@ -1,4 +1,6 @@
-#include "tensor.hpp"
+#include "utils.hpp"
+
+using namespace core;
 
 std::vector<int> squeezeShape(std::vector<int> inputShape)
 {
@@ -11,7 +13,7 @@ std::vector<int> squeezeShape(std::vector<int> inputShape)
     return resultShape;
 }
 
-bool checkBroadcastable(const Tensor &t1, const Tensor &t2)
+bool checkBroadcastable(const Tensor t1, const Tensor t2)
 {
     std::vector<int> t1Dims = t1.shape()->dims();
     std::vector<int> t2Dims = t2.shape()->dims();

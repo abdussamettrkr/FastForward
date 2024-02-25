@@ -1,5 +1,7 @@
 #include "tensor.hpp"
 
+using namespace core;
+
 bool test_matmul()
 {
     Tensor left = Tensor::ones({3, 4});
