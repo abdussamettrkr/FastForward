@@ -1,6 +1,6 @@
 #include "tensor.hpp"
 #include "primitives.hpp"
-#include "utils.cpp"
+#include "utils.hpp"
 
 namespace core{
 template <typename Iterable>

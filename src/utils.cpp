@@ -2,7 +2,7 @@
 
 using namespace core;
 
-std::vector<int> squeezeShape(std::vector<int> inputShape)
+std::vector<int> squeezeShape(const std::vector<int> inputShape)
 {
     std::vector<int> resultShape;
     for (auto value : inputShape)
@@ -31,4 +31,29 @@ bool checkBroadcastable(const Tensor t1, const Tensor t2)
     }
 
     return true;
+}
+
+std::vector<int> broadcastShapes(const std::vector<int>& shape1, const std::vector<int>& shape2){
+    int diff = shape1.size() - shape2.size();
+    const auto& big = shape1.size() > shape2.size() ? shape1 : shape2;
+    const auto& small = shape1.size() <= shape2.size() ? shape1 : shape2;
+    std::vector<int> resultShape(big.size());
+
+    if (diff < 0)
+        diff = -diff;
+
+    for (size_t i = 0; i < big.size(); i++)
+    {   
+        if (i < diff){
+            resultShape[i] = big[i];
+            continue;
+        }
+        if(big[i] == 1 || small[i - diff] == 1)
+            resultShape[i] = big[i] * small[i - diff];
+        else if(big[i] != small[i - diff])
+            throw std::logic_error("Provided shapes cannot be broadcasted");
+        else
+            resultShape[i] = big[i];
+    }
+    return resultShape;
 }
