@@ -58,6 +58,24 @@ std::vector<int> broadcastShapes(const std::vector<int>& shape1, const std::vect
     return resultShape;
 }
 
+
+Tensor broadcastTo(const Tensor &t1, const std::vector<int> shape)
+{
+    auto bshape =  broadcastShapes(t1.shape()->dims(), shape);
+    std::vector<int> bstrides(bshape.size(), 0);
+    std::vector<int> tstrides = t1.getStrides();
+    auto diff = bshape.size() - t1.shape()->ndims();
+    for (size_t i = diff; i < t1.shape()->ndims(); i++)
+    {
+        if(bshape[i] == 1 || t1.shape()->dims()[i-diff] == 1)
+            bstrides[i] = 0;
+        else
+            bstrides[i] = tstrides[i-diff];
+    }
+    return Tensor(bshape, bstrides, t1.data());
+}
+
+
 std::vector<int> calculateStride(const std::vector<int> shape){
     size_t prod = 1 * 8;
     std::vector<int> strides = std::vector<int>(shape.size(),0);

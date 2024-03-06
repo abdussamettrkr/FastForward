@@ -14,6 +14,7 @@ public:
     template <typename Iterable>
     Tensor(Iterable &arraylike, float *data);
     Tensor(std::initializer_list<int> arraylike, float *data);
+    Tensor(std::vector<int> shapes, std::vector<int> strides, float *data);
     Tensor(const std::vector<Tensor>& inputs, Primitive op);
 
     // Creation methods
@@ -48,8 +49,9 @@ public:
     Tensor matmul(const Tensor &other);
     Shape *shape() const;
     float *data() const;
+    float *data();
     int size() const;
-    std::vector<int> getStrides();
+    std::vector<int> getStrides() const;
 
 private:
     float *m_data = nullptr;

@@ -32,6 +32,11 @@ float *Tensor::data() const
     return m_data;
 }
 
+float *Tensor::data()
+{
+    return m_data;
+}
+
 int Tensor::size() const{ return m_shape->size(); };
 
 Shape *Tensor::shape() const
@@ -117,6 +122,13 @@ Tensor::Tensor(std::initializer_list<int> arraylike, float *data){
     this->strides = calculateStride(m_shape->dims());
 }
 
+Tensor::Tensor(std::vector<int> shapes, std::vector<int> strides, float *data){
+    m_data = data;
+    this->m_shape = new Shape(shapes);
+    this->strides = strides;
+}
+
+
 Tensor::Tensor(const std::vector<Tensor>& _inputs, Primitive _op){
     throw std::logic_error("Not implemented");
 }
@@ -188,7 +200,7 @@ Tensor Tensor::matmul(const Tensor &other)
     return result;
 }
 
-std::vector<int> Tensor::getStrides(){
+std::vector<int> Tensor::getStrides() const{
     return this->strides;
 }
 
