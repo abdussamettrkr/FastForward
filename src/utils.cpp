@@ -57,3 +57,14 @@ std::vector<int> broadcastShapes(const std::vector<int>& shape1, const std::vect
     }
     return resultShape;
 }
+
+std::vector<int> calculateStride(const std::vector<int> shape){
+    size_t prod = 1 * 8;
+    std::vector<int> strides = std::vector<int>(shape.size(),0);
+    for (int i = shape.size()-1; i >= 0; i--) {
+        strides[i] = prod;
+        prod *= shape[i];
+    }
+
+    return strides;
+}

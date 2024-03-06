@@ -41,7 +41,7 @@ public:
     template <typename T>
     Tensor operator*(T value);
     Tensor operator*(const Tensor &other);
-
+    
     bool operator==(const Tensor &other);
     float& operator[](int index);
 
@@ -49,10 +49,12 @@ public:
     Shape *shape() const;
     float *data() const;
     int size() const;
+    std::vector<int> getStrides();
 
 private:
     float *m_data = nullptr;
     Shape *m_shape = nullptr;
+    std::vector<int> strides;
 
     
 };

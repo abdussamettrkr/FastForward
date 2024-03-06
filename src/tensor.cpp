@@ -108,12 +108,13 @@ Tensor::Tensor(Iterable &arraylike, float *data)
 {
     m_data = data;
     this->m_shape = new Shape(arraylike);
-
+    this->strides = calculateStride(m_shape->dims());
 }
 
 Tensor::Tensor(std::initializer_list<int> arraylike, float *data){
     m_data = data;
     this->m_shape = new Shape(arraylike);
+    this->strides = calculateStride(m_shape->dims());
 }
 
 Tensor::Tensor(const std::vector<Tensor>& _inputs, Primitive _op){
@@ -186,4 +187,9 @@ Tensor Tensor::matmul(const Tensor &other)
     }
     return result;
 }
+
+std::vector<int> Tensor::getStrides(){
+    return this->strides;
+}
+
 }

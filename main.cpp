@@ -12,4 +12,5 @@ int main()
     add.eval({t, t2}, t3);
     
     std::cout << t3.data()[0] << "|" << t3.data()[1] << "|" << t3.data()[2] << "|" << t3.data()[3] << "|" << t3.data()[4] << "|" << t3.data()[5] << "|" << std::endl;
+    std::cout << t3.getStrides()[0]  << "|"  << t3.getStrides()[1] << "|"<< t3.getStrides()[2] << "|" <<std::endl;
 }
