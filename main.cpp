@@ -6,7 +6,7 @@ int main()
 {
 
     Tensor t = Tensor::ones({3, 2, 3});
-    Tensor t2 = Tensor::ones({3, 2, 3});
+    Tensor t2 = Tensor::ones({1});
     Tensor t3 = Tensor::ones({3, 2, 3});
     Add add;
     add.eval({t, t2}, t3);

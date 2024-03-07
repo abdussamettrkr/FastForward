@@ -77,7 +77,7 @@ Tensor broadcastTo(const Tensor &t1, const std::vector<int> shape)
 
 
 std::vector<int> calculateStride(const std::vector<int> shape){
-    size_t prod = 1 * 8;
+    size_t prod = 1 * 8; // 8 -> data type
     std::vector<int> strides = std::vector<int>(shape.size(),0);
     for (int i = shape.size()-1; i >= 0; i--) {
         strides[i] = prod;
@@ -85,4 +85,16 @@ std::vector<int> calculateStride(const std::vector<int> shape){
     }
 
     return strides;
+}
+
+
+size_t loc(size_t idx, const std::vector<int> &shapes, const std::vector<int> &strides)
+{
+    size_t loc = 0;
+    for (size_t i = shapes.size()-1; i >= 0 && idx > 0; i--)
+    {
+        loc += (idx % shapes[i]) * strides[i];
+        idx /= shapes[i];
+    }
+    return loc;
 }
