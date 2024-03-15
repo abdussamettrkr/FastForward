@@ -1,3 +1,4 @@
+#pragma once
 #include "primitives.hpp"
 #include "tensor.hpp"
 

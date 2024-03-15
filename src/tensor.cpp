@@ -1,6 +1,8 @@
 #include "tensor.hpp"
-#include "primitives.hpp"
 #include "utils.hpp"
+#include "ops.hpp"
+#include "binary_primitives.hpp"
+
 
 namespace core{
 template <typename Iterable>
@@ -47,46 +49,22 @@ Shape *Tensor::shape() const
 // We will perform operations inplace!
 Tensor Tensor::operator+(const Tensor &other)
 {
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] += other.data()[i];
-    }
-
-    return *this;
+    return add(*this, other);
 }
 
 Tensor Tensor::operator-(const Tensor &other)
 {
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] -= other.data()[i];
-    }
-
-    return *this;
+    return substract(*this, other);
 }
 
 Tensor Tensor::operator/(const Tensor &other)
 {
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] /= other.data()[i];
-    }
-
-    return *this;
+    return divide(*this, other);
 }
 
 Tensor Tensor::operator*(const Tensor &other)
 {
-    int total_size = size();
-    for (int i = 0; i < total_size; i++)
-    {
-        m_data[i] *= other.data()[i];
-    }
-
-    return *this;
+    return multiply(*this, other);
 }
 
 bool Tensor::operator==(const Tensor &other){
@@ -130,7 +108,7 @@ Tensor::Tensor(std::vector<int> shapes, std::vector<int> strides, float *data){
 
 
 Tensor::Tensor(const std::vector<Tensor>& _inputs, Primitive _op){
-    throw std::logic_error("Not implemented");
+throw std::logic_error("Not implemented");
 }
 
 template <typename Iterable>
