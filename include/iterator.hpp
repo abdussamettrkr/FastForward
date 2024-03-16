@@ -4,21 +4,25 @@
 
 template <typename Op>
 void binary_array_iterator(const core::Tensor left, const core::Tensor right, core::Tensor &out, Op op){
-    if (!checkBroadcastable(left, right))
-        throw std::logic_error("Tensors are not compatiable!");
+    const float* left_data = left.data();
+    const float* right_data = right.data();
 
-    auto bshape = broadcastShapes(left.shape()->dims(), right.shape()->dims());
-    auto bleft = broadcastTo(left, bshape);
-    auto bright = broadcastTo(right, bshape);
-
-    const float* bleft_data = bleft.data();
-    const float* bright_data = bright.data();
-
-    // Add parallel for
+    // TODO: Add parallel for
     for(size_t i = 0; i < out.size(); i++){
-        size_t bleft_idx = loc(i, bleft.shape()->dims(), bleft.getStrides()) / 8;
-        size_t bright_idx = loc(i, bright.shape()->dims(), bright.getStrides()) / 8;
-        out[i] = op(bleft_data[bleft_idx], bright_data[bright_idx]);
+        // TODO: Use loc only when Tensor is not contiguous
+        size_t left_idx = loc(i, left.shape()->dims(), left.getStrides()) / 8;
+        size_t right_idx = loc(i, right.shape()->dims(), right.getStrides()) / 8;
+        out[i] = op(left_data[left_idx], right_data[right_idx]);
     }
 }
 
+
+template <typename Op>
+void unary_array_iterator(const core::Tensor left, core::Tensor &out, Op op){
+    const float* left_data = left.data();
+
+    // TODO: Add parallel for
+    for(size_t i = 0; i < out.size(); i++){
+        out[i] = op(left_data[i]);
+    }
+}

@@ -6,7 +6,8 @@ int main()
 {
     Tensor t = Tensor::ones({3, 2, 3});
     Tensor t2 = Tensor::ones({1});
-    Tensor t3 = t - t2;
+    Tensor t3 = t * 123;
+    t3 = t3.log().sqrt();
     Tensor t4 = broadcastTo(t2, {4,3,2,3});
     
     

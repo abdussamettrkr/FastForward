@@ -49,22 +49,22 @@ Shape *Tensor::shape() const
 // We will perform operations inplace!
 Tensor Tensor::operator+(const Tensor &other)
 {
-    return add(*this, other);
+    return ops::add(*this, other);
 }
 
 Tensor Tensor::operator-(const Tensor &other)
 {
-    return substract(*this, other);
+    return ops::substract(*this, other);
 }
 
 Tensor Tensor::operator/(const Tensor &other)
 {
-    return divide(*this, other);
+    return ops::divide(*this, other);
 }
 
 Tensor Tensor::operator*(const Tensor &other)
 {
-    return multiply(*this, other);
+    return ops::multiply(*this, other);
 }
 
 bool Tensor::operator==(const Tensor &other){
@@ -82,12 +82,27 @@ bool Tensor::operator==(const Tensor &other){
     return true;
 }
 
+Tensor Tensor::log(){
+    return ops::log(*this);
+}
+
+Tensor Tensor::sqrt(){
+    return ops::sqrt(*this);
+}
+
 float& Tensor::operator[](int idx){
     return m_data[idx];
 }
 
 template <typename Iterable>
 Tensor::Tensor(Iterable &arraylike, float *data)
+{
+    m_data = data;
+    this->m_shape = new Shape(arraylike);
+    this->strides = calculateStride(m_shape->dims());
+}
+
+Tensor::Tensor(const std::vector<int> arraylike, float *data)
 {
     m_data = data;
     this->m_shape = new Shape(arraylike);

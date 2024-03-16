@@ -2,6 +2,7 @@
 #include "tensor.hpp"
 #include "utils.hpp"
 #include "binary_primitives.hpp"
+#include "unary_primitives.hpp"
 
 
 core::Tensor binary_op(const core::Tensor& left, const core::Tensor& right, core::Primitive& op){
@@ -19,6 +20,15 @@ core::Tensor binary_op(const core::Tensor& left, const core::Tensor& right, core
     op.eval({bleft, bright}, out);
     return out;
 }
+
+
+namespace ops{
+core::Tensor unary_op(const core::Tensor& in, core::Primitive& op){    
+    auto out = core::Tensor(in.shape()->dims(), new float[in.size()]);
+    op.eval({in}, out);
+    return out;
+}
+
 
 
 core::Tensor add(const core::Tensor& left, const core::Tensor& right){
@@ -43,4 +53,15 @@ core::Tensor multiply(const core::Tensor& left, const core::Tensor& right){
     // We are going to make it lazy
     core::Divide op;
     return binary_op(left, right, op);
+}
+
+core::Tensor log(const core::Tensor& in){
+    core::Log op;
+    return unary_op(in, op);
+}
+
+core::Tensor sqrt(const core::Tensor& in){
+    core::Sqrt op;
+    return unary_op(in, op);
+}
 }

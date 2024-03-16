@@ -16,6 +16,7 @@ public:
     Tensor(std::initializer_list<int> arraylike, float *data);
     Tensor(std::vector<int> shapes, std::vector<int> strides, float *data);
     Tensor(const std::vector<Tensor>& inputs, Primitive op);
+    Tensor(const std::vector<int> arraylike, float *data);
 
     // Creation methods
     template <typename Iterable>
@@ -42,6 +43,9 @@ public:
     template <typename T>
     Tensor operator*(T value);
     Tensor operator*(const Tensor &other);
+    
+    Tensor log();
+    Tensor sqrt();
     
     bool operator==(const Tensor &other);
     float& operator[](int index);
