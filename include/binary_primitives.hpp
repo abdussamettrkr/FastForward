@@ -7,24 +7,30 @@ namespace core{
 class Add : public Primitive
 {
     public:
-        void eval(const std::vector<Tensor> inputs, Tensor& out) override;
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
 class Substract : public Primitive
 {
     public:
-        void eval(const std::vector<Tensor> inputs, Tensor& out) override;
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
 class Multiply : public Primitive
 {
     public:
-        void eval(const std::vector<Tensor> inputs, Tensor& out) override;
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
 class Divide : public Primitive
 {
     public:
-        void eval(const std::vector<Tensor> inputs, Tensor& out) override;
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
+
+class Matmul : public Primitive
+{
+    public:
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 }

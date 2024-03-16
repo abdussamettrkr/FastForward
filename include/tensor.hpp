@@ -17,6 +17,7 @@ public:
     Tensor(std::vector<int> shapes, std::vector<int> strides, float *data);
     Tensor(const std::vector<Tensor>& inputs, Primitive op);
     Tensor(const std::vector<int> arraylike, float *data);
+    Tensor(const std::vector<int> shape);
 
     // Creation methods
     template <typename Iterable>

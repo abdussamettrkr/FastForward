@@ -6,7 +6,7 @@
 
 
 core::Tensor binary_op(const core::Tensor& left, const core::Tensor& right, core::Primitive& op){
-    if(!checkBroadcastable(left, right))
+    if(!checkBroadcastable(left.shape()->dims(), right.shape()->dims()))
         throw std::logic_error("Tensors are not compatiable!");
     
     auto bshape = broadcastShapes(left.shape()->dims(), right.shape()->dims());
@@ -63,5 +63,23 @@ core::Tensor log(const core::Tensor& in){
 core::Tensor sqrt(const core::Tensor& in){
     core::Sqrt op;
     return unary_op(in, op);
+}
+
+core::Tensor matmul(const core::Tensor& left, const core::Tensor& right){
+    const std::vector<int>& leftShape = left.shape()->dims();
+    const std::vector<int>& rightShape = right.shape()->dims();
+    std::vector<int> leftBaseShape(leftShape.begin(), leftShape.end()-2);
+    std::vector<int> rightBaseShape(rightShape.begin(), rightShape.end()-2);
+
+    
+    auto outShape = broadcastShapes(leftBaseShape, rightBaseShape);
+    outShape.push_back(left.shape()->dims()[left.shape()->dims().size()-2]);
+    outShape.push_back(right.shape()->dims()[right.shape()->dims().size()-1]);
+
+    auto out = core::Tensor(outShape);
+
+    core::Matmul op;
+    op.eval({left, right}, out);   
+    return out;
 }
 }

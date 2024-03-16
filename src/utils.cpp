@@ -13,10 +13,10 @@ std::vector<int> squeezeShape(const std::vector<int> inputShape)
     return resultShape;
 }
 
-bool checkBroadcastable(const Tensor t1, const Tensor t2)
+bool checkBroadcastable(const std::vector<int>& t1Shape, const std::vector<int>& t2Shape)
 {
-    std::vector<int> t1Dims = t1.shape()->dims();
-    std::vector<int> t2Dims = t2.shape()->dims();
+    std::vector<int> t1Dims = t1Shape;
+    std::vector<int> t2Dims = t2Shape;
 
     while (t1Dims.size() < t2Dims.size())
         t1Dims.insert(t1Dims.begin(), 1);
