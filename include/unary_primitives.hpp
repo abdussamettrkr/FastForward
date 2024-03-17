@@ -16,4 +16,9 @@ class Sqrt : public Primitive
         void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
+class Convolution : public Primitive
+{
+    public:
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
 }

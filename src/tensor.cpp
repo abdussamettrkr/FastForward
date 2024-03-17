@@ -1,7 +1,6 @@
 #include "tensor.hpp"
 #include "utils.hpp"
 #include "ops.hpp"
-#include "binary_primitives.hpp"
 
 
 namespace core{
@@ -83,11 +82,11 @@ bool Tensor::operator==(const Tensor &other){
 }
 
 Tensor Tensor::log(){
-    return ops::log(*this);
+return ops::log(*this);
 }
 
 Tensor Tensor::sqrt(){
-    return ops::sqrt(*this);
+return ops::sqrt(*this);
 }
 
 float& Tensor::operator[](int idx){
