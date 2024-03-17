@@ -3,22 +3,32 @@
 #include <iostream>
 #include "shape.hpp"
 
+#define EPSILON 1e-3
+
+namespace core{
+class Primitive;
+
 class Tensor
 {
 public:
-    Shape *shape() const;
+    template <typename Iterable>
+    Tensor(Iterable &arraylike, float *data);
+    Tensor(std::initializer_list<int> arraylike, float *data);
+    Tensor(std::vector<int> shapes, std::vector<int> strides, float *data);
+    Tensor(const std::vector<Tensor>& inputs, Primitive op);
+    Tensor(const std::vector<int> arraylike, float *data);
+    Tensor(const std::vector<int> shape);
 
+    // Creation methods
     template <typename Iterable>
     static Tensor ones(Iterable &arraylike);
     static Tensor ones(std::initializer_list<int> arraylike);
     template <typename Iterable>
     static Tensor zeros(Iterable &arraylike);
     static Tensor zeros(std::initializer_list<int> arraylike);
+    // static Tensor randn(unsigned int rows, unsigned int cols);
 
-    //static Tensor randn(unsigned int rows, unsigned int cols);
-
-    Tensor();
-
+    // Operators
     template <typename T>
     Tensor operator+(T value);
     Tensor operator+(const Tensor &other);
@@ -34,23 +44,26 @@ public:
     template <typename T>
     Tensor operator*(T value);
     Tensor operator*(const Tensor &other);
+    
+    Tensor log();
+    Tensor sqrt();
+    
+    bool operator==(const Tensor &other);
+    float& operator[](int index);
 
     Tensor matmul(const Tensor &other);
-
+    Shape *shape() const;
     float *data() const;
-    Tensor getKernel(float* buffer, float* fromMat, int kernel_size, int i, int j);
-    float sum();
-
-    friend std::ostream &operator<<(std::ostream &os, Tensor &obj);
+    float *data();
+    int size() const;
+    std::vector<int> getStrides() const;
 
 private:
-    float *m_data;
-    Shape *m_shape;
+    float *m_data = nullptr;
+    Shape *m_shape = nullptr;
+    std::vector<int> strides;
 
-    template <typename Iterable>
-    Tensor(Iterable &arraylike, float *data);
-
-    int size();
+    
 };
 
 // Template functions definition
@@ -101,17 +114,4 @@ Tensor Tensor::operator*(T value)
 
     return *this;
 }
-
-template <typename Iterable>
-Tensor Tensor::zeros(Iterable &arraylike)
-{
-    int n_zeros = 1;
-    for (auto &dim : arraylike)
-        n_zeros *= dim;
-    float *data = new float[n_zeros];
-    for (int i = 0; i < n_zeros; i++)
-    {
-        *(data + i) = 0;
-    }
-    return Tensor(arraylike, data);
 }

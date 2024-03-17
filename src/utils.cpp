@@ -1,21 +1,22 @@
-#include "tensor.hpp"
-#include <string.h> 
+#include "utils.hpp"
 
-std::vector<int> squeezeVector(std::vector<int> inpVector)
+using namespace core;
+
+std::vector<int> squeezeShape(const std::vector<int> inputShape)
 {
-    std::vector<int> resultVector;
-    for (auto value : inpVector)
+    std::vector<int> resultShape;
+    for (auto value : inputShape)
     {
         if (value > 1)
-            resultVector.push_back(value);
+            resultShape.push_back(value);
     }
-    return resultVector;
+    return resultShape;
 }
 
-bool checkBroadcastable(const Tensor &t1, const Tensor &t2)
+bool checkBroadcastable(const std::vector<int>& t1Shape, const std::vector<int>& t2Shape)
 {
-    std::vector<int> t1Dims = t1.shape()->dims();
-    std::vector<int> t2Dims = t2.shape()->dims();
+    std::vector<int> t1Dims = t1Shape;
+    std::vector<int> t2Dims = t2Shape;
 
     while (t1Dims.size() < t2Dims.size())
         t1Dims.insert(t1Dims.begin(), 1);
@@ -26,60 +27,74 @@ bool checkBroadcastable(const Tensor &t1, const Tensor &t2)
     for (int i = 0; i < t1Dims.size() - 2; i++)
     {
         if (t1Dims[i] != t2Dims[i] && (t1Dims[i] != 1 && t2Dims[i] != 1))
-        {
             return false;
-        }
     }
 
     return true;
 }
 
-std::vector<Tensor> broadCast(const Tensor &t1, const Tensor &t2)
+std::vector<int> broadcastShapes(const std::vector<int>& shape1, const std::vector<int>& shape2){
+    int diff = shape1.size() - shape2.size();
+    const auto& big = shape1.size() > shape2.size() ? shape1 : shape2;
+    const auto& small = shape1.size() <= shape2.size() ? shape1 : shape2;
+    std::vector<int> resultShape(big.size());
+
+    if (diff < 0)
+        diff = -diff;
+
+    for (size_t i = 0; i < big.size(); i++)
+    {   
+        if (i < diff){
+            resultShape[i] = big[i];
+            continue;
+        }
+        if(big[i] == 1 || small[i - diff] == 1)
+            resultShape[i] = big[i] * small[i - diff];
+        else if(big[i] != small[i - diff])
+            throw std::logic_error("Provided shapes cannot be broadcasted");
+        else
+            resultShape[i] = big[i];
+    }
+    return resultShape;
+}
+
+
+Tensor broadcastTo(const Tensor &t1, const std::vector<int> shape)
 {
-    std::vector<int> t1Dims = t1.shape()->dims();
-    std::vector<int> t2Dims = t2.shape()->dims();
-    std::vector<int> broadCastedDims;
-    std::vector<int> mainDims;
-    std::vector<int> otherDims;
-    int targetSize = -1;
-    int sourceSize = -1;
-    bool isT1Main = false;
-    float *sourceData = nullptr;
-    float *targetData = nullptr;
-    std::vector<Tensor> result;
-
-    if (t1Dims.size() > t2Dims.size())
+    auto bshape =  broadcastShapes(t1.shape()->dims(), shape);
+    std::vector<int> bstrides(bshape.size(), 0);
+    std::vector<int> tstrides = t1.getStrides();
+    auto diff = bshape.size() - t1.shape()->ndims();
+    for (size_t i = diff; i < t1.shape()->ndims(); i++)
     {
-        isT1Main = true;
-        sourceSize = (*t1.shape()).size();
-        sourceData = t2.data();
-        mainDims = squeezeVector(t1Dims);
-        otherDims = squeezeVector(t2Dims);
-        result.push_back(t1);
+        if(bshape[i] == 1 || t1.shape()->dims()[i-diff] == 1)
+            bstrides[i] = 0;
+        else
+            bstrides[i] = tstrides[i-diff];
     }
-    else
-    {
-        sourceSize = (*t2.shape()).size();
-        sourceData = t1.data();
-        mainDims = squeezeVector(t2Dims);
-        otherDims = squeezeVector(t1Dims);
-        result.push_back(t2);
+    return Tensor(bshape, bstrides, t1.data());
+}
+
+
+std::vector<int> calculateStride(const std::vector<int> shape){
+    size_t prod = 1 * 8; // 8 -> data type
+    std::vector<int> strides = std::vector<int>(shape.size(),0);
+    for (int i = shape.size()-1; i >= 0; i--) {
+        strides[i] = prod;
+        prod *= shape[i];
     }
 
-    for (int i = 0; i < mainDims.size() - 2; i++)
-        broadCastedDims.push_back(mainDims[i]);
-    for (int i = 0; i < otherDims.size(); i++)
-        broadCastedDims.push_back(otherDims[i]);
+    return strides;
+}
 
-    Tensor broadCastedTensor = Tensor::zeros(broadCastedDims);
-    targetSize = (*broadCastedTensor.shape()).size();
-    targetData = broadCastedTensor.data();
 
-    for (int i = 0; i < targetSize / sourceSize; i++)
+size_t loc(size_t idx, const std::vector<int> &shapes, const std::vector<int> &strides)
+{
+    size_t loc = 0;
+    for (size_t i = shapes.size()-1; i >= 0 && idx > 0; i--)
     {
-        memcpy(targetData + (i * sourceSize), sourceData, sourceSize);
+        loc += (idx % shapes[i]) * strides[i];
+        idx /= shapes[i];
     }
-    result.push_back(broadCastedTensor);
-
-    return result;
+    return loc;
 }
