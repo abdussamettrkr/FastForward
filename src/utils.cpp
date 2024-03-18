@@ -61,13 +61,13 @@ std::vector<int> broadcastShapes(const std::vector<int>& shape1, const std::vect
 
 Tensor broadcastTo(const Tensor &t1, const std::vector<int> shape)
 {
-    auto bshape =  broadcastShapes(t1.shape()->dims(), shape);
+    auto bshape =  broadcastShapes(t1.shape(), shape);
     std::vector<int> bstrides(bshape.size(), 0);
-    std::vector<int> tstrides = t1.getStrides();
-    auto diff = bshape.size() - t1.shape()->ndims();
-    for (size_t i = diff; i < t1.shape()->ndims(); i++)
+    std::vector<int> tstrides = t1.strides();
+    auto diff = bshape.size() - t1.ndim();
+    for (size_t i = diff; i < t1.ndim(); i++)
     {
-        if(bshape[i] == 1 || t1.shape()->dims()[i-diff] == 1)
+        if(bshape[i] == 1 || t1.shape()[i-diff] == 1)
             bstrides[i] = 0;
         else
             bstrides[i] = tstrides[i-diff];

@@ -10,8 +10,8 @@ void binary_array_iterator(const core::Tensor left, const core::Tensor right, co
     // TODO: Add parallel for
     for(size_t i = 0; i < out.size(); i++){
         // TODO: Use loc only when Tensor is not contiguous
-        size_t left_idx = loc(i, left.shape()->dims(), left.getStrides());
-        size_t right_idx = loc(i, right.shape()->dims(), right.getStrides());
+        size_t left_idx = loc(i, left.shape(), left.strides());
+        size_t right_idx = loc(i, right.shape(), right.strides());
         out[i] = op(left_data[left_idx], right_data[right_idx]);
     }
 }

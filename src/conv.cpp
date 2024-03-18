@@ -6,8 +6,8 @@ namespace core{
 void Convolution::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
     auto& input = inputs[0]; // N,H,W,C
     auto& kernel = inputs[1]; //O,H,W,C
-    const std::vector<int> inShape = input.shape()->dims();
-    const std::vector<int> kShape = kernel.shape()->dims();
+    const std::vector<int> inShape = input.shape();
+    const std::vector<int> kShape = kernel.shape();
 
     size_t N = inShape[0];
     size_t inH = inShape[1];
@@ -18,9 +18,9 @@ void Convolution::eval(const std::vector<core::Tensor>& inputs, core::Tensor& ou
     size_t kW = kShape[2];
 
     const float* kData = kernel.data();
-    const std::vector<int> kStrides = kernel.getStrides();
+    const std::vector<int> kStrides = kernel.strides();
     const float* iData = input.data();
-    const std::vector<int> iStrides = input.getStrides();
+    const std::vector<int> iStrides = input.strides();
 
     float* outData = out.data();
 

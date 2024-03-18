@@ -9,8 +9,8 @@ void Matmul::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
     auto& right = inputs[1];
     
     
-    std::vector<int> leftShape = squeezeShape(left.shape()->dims());
-    std::vector<int> rightShape = squeezeShape(right.shape()->dims());
+    std::vector<int> leftShape = squeezeShape(left.shape());
+    std::vector<int> rightShape = squeezeShape(right.shape());
     
 
     if (leftShape.size() < 2 || rightShape.size() < 2)

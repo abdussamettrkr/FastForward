@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include "shape.hpp"
 
 #define EPSILON 1e-3
 
@@ -11,21 +10,14 @@ class Primitive;
 class Tensor
 {
 public:
-    template <typename Iterable>
-    Tensor(Iterable &arraylike, float *data);
-    Tensor(std::initializer_list<int> arraylike, float *data);
     Tensor(std::vector<int> shapes, std::vector<int> strides, float *data);
     Tensor(const std::vector<Tensor>& inputs, Primitive op);
     Tensor(const std::vector<int> arraylike, float *data);
     Tensor(const std::vector<int> shape);
 
     // Creation methods
-    template <typename Iterable>
-    static Tensor ones(Iterable &arraylike);
-    static Tensor ones(std::initializer_list<int> arraylike);
-    template <typename Iterable>
-    static Tensor zeros(Iterable &arraylike);
-    static Tensor zeros(std::initializer_list<int> arraylike);
+    static Tensor ones(std::vector<int> shape);
+    static Tensor zeros(std::vector<int> shape);
     // static Tensor randn(unsigned int rows, unsigned int cols);
 
     // Operators
@@ -52,18 +44,33 @@ public:
     float& operator[](int index);
 
     Tensor matmul(const Tensor &other);
-    Shape *shape() const;
     float *data() const;
     float *data();
     int size() const;
-    std::vector<int> getStrides() const;
+    int ndim() const;
+    std::vector<int> strides() const;
+    std::vector<int> shape() const;
 
 private:
-    float *m_data = nullptr;
-    Shape *m_shape = nullptr;
-    std::vector<int> strides;
+    class Storage{
+        public:
+            Storage(float *_data, std::vector<int> _shape, std::vector<int> _strides): 
+                data(_data), shape(_shape), strides(_strides), ndim(_shape.size()) {
+                    size=1;
+                    for (size_t i : _shape)
+                    {
+                        size *= i;
+                    }   
 
-    
+                }
+
+            float *data;
+            size_t size;
+            size_t ndim;
+            const std::vector<int> shape;
+            const std::vector<int> strides;
+    };
+    Storage* storage;
 };
 
 // Template functions definition
@@ -73,7 +80,7 @@ Tensor Tensor::operator+(T value)
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
-        m_data[i] += value;
+        storage->data[i] += value;
     }
 
     return *this;
@@ -85,7 +92,7 @@ Tensor Tensor::operator-(T value)
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
-        m_data[i] -= value;
+        storage->data[i] -= value;
     }
 
     return *this;
@@ -97,7 +104,7 @@ Tensor Tensor::operator/(T value)
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
-        m_data[i] /= value;
+        storage->data[i] /= value;
     }
 
     return *this;
@@ -109,7 +116,7 @@ Tensor Tensor::operator*(T value)
     int total_size = size();
     for (int i = 0; i < total_size; i++)
     {
-        m_data[i] *= value;
+        storage->data[i] *= value;
     }
 
     return *this;
