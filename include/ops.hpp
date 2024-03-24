@@ -18,7 +18,7 @@ core::Tensor divide(const core::Tensor& left, const core::Tensor& right);
 core::Tensor log(const core::Tensor& in);
 core::Tensor sqrt(const core::Tensor& in);
 
-core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel);
+core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel, size_t stride=1);
 core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t stride);
 core::Tensor matmul(const core::Tensor& left, const core::Tensor& right);
 

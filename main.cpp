@@ -5,8 +5,8 @@ int main()
 {
     core::Tensor input = core::Tensor::ones({1, 5, 5, 4});
     core::Tensor kernel = core::Tensor::zeros({8, 3, 3, 4});
-    kernel = kernel + 1;
-    core::Tensor result = ops::maxpool2d(input, 2, 2);
+    kernel = kernel + 2;
+    core::Tensor result = ops::conv2d(input, kernel, 2);
 
     std::cout << "<";
     for (auto item : result.shape())

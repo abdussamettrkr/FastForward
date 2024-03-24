@@ -20,7 +20,10 @@ class Sqrt : public Primitive
 class Convolution : public Primitive
 {
     public:
+        Convolution(size_t _stride): stride(_stride) {}
         void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+    private:
+        size_t stride;
 };
 
 class MaxPool2D : public Primitive{

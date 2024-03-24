@@ -80,16 +80,18 @@ core::Tensor matmul(const core::Tensor& left, const core::Tensor& right){
     return out;
 }
 
-core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel){
+core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel, size_t stride){
     // TODO: Check shapes are compatiable
     const std::vector<int>& inputShape = input.shape();
     const std::vector<int>& kernelShape = kernel.shape();
 
     std::vector<int> outShape(inputShape.begin(), inputShape.end()-1);
     outShape.insert(outShape.end(), kernelShape[0]);
+    outShape[1] = (outShape[1] - kernelShape[1]) / stride + 1;
+    outShape[2] = (outShape[2] - kernelShape[2]) / stride + 1;
 
     auto out = core::Tensor(outShape);
-    core::Convolution op;
+    core::Convolution op(stride);
     op.eval({input, kernel}, out);
     return out;
 }
@@ -99,8 +101,8 @@ core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t str
     const std::vector<int>& inputShape = input.shape();
 
     std::vector<int> outShape(inputShape.begin(), inputShape.end());
-    outShape[1] = (outShape[1] - (kernel_size-1) - 1) / stride + 1;
-    outShape[2] = (outShape[2] - (kernel_size-1) - 1) / stride + 1;
+    outShape[1] = (outShape[1] - kernel_size) / stride + 1;
+    outShape[2] = (outShape[2] - kernel_size) / stride + 1;
 
     auto out = core::Tensor(outShape);
     core::MaxPool2D op(kernel_size, stride);
