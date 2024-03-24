@@ -42,10 +42,11 @@ float *Tensor::data()
     return storage->data;
 }
 
-int Tensor::size() const{ return storage->size; };
-int Tensor::ndim() const{ return storage->ndim; };
-std::vector<int> Tensor::shape() const { return storage->shape; };
+int Tensor::size() const{ return storage->size; }
+int Tensor::ndim() const{ return storage->ndim; }
+std::vector<int> Tensor::shape() const { return storage->shape; }
 std::vector<int> Tensor::strides() const{ return storage->strides; }
+bool Tensor::is_contiguous() const { return storage->contiguous; }
 
 
 
@@ -91,6 +92,11 @@ return ops::log(*this);
 Tensor Tensor::sqrt(){
 return ops::sqrt(*this);
 }
+
+Tensor Tensor::max(std::vector<int> axes){
+    return ops::max(*this, axes);
+}
+
 
 float& Tensor::operator[](int idx){
     return storage->data[idx];

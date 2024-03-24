@@ -7,3 +7,9 @@ std::vector<int> squeezeShape(const std::vector<int> inputShape);
 core::Tensor broadcastTo(const core::Tensor &t1, const std::vector<int> shape);
 std::vector<int> calculateStride(const std::vector<int> shape);
 size_t loc(size_t idx, const std::vector<int> &shapes, const std::vector<int> &strides);
+
+
+enum ReductionType{
+    ContiguousAllReduce,
+    ContiguousReduce
+};

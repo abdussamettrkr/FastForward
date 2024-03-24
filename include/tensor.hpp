@@ -39,6 +39,9 @@ public:
     
     Tensor log();
     Tensor sqrt();
+
+    Tensor max(std::vector<int> axes = {});
+
     
     bool operator==(const Tensor &other);
     float& operator[](int index);
@@ -50,6 +53,7 @@ public:
     int ndim() const;
     std::vector<int> strides() const;
     std::vector<int> shape() const;
+    bool is_contiguous() const;
 
 private:
     class Storage{
@@ -58,15 +62,14 @@ private:
                 data(_data), shape(_shape), strides(_strides), ndim(_shape.size()) {
                     size=1;
                     for (size_t i : _shape)
-                    {
                         size *= i;
-                    }   
-
+                    contiguous = true;
                 }
 
             float *data;
             size_t size;
             size_t ndim;
+            bool contiguous;
             const std::vector<int> shape;
             const std::vector<int> strides;
     };

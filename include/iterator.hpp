@@ -3,7 +3,7 @@
 #include "utils.hpp"
 
 template <typename Op>
-void binary_array_iterator(const core::Tensor left, const core::Tensor right, core::Tensor &out, Op op){
+void binary_array_iterator(const core::Tensor& left, const core::Tensor& right, core::Tensor &out, Op op){
     const float* left_data = left.data();
     const float* right_data = right.data();
 
@@ -18,7 +18,7 @@ void binary_array_iterator(const core::Tensor left, const core::Tensor right, co
 
 
 template <typename Op>
-void unary_array_iterator(const core::Tensor left, core::Tensor &out, Op op){
+void unary_array_iterator(const core::Tensor& left, core::Tensor &out, Op op){
     const float* left_data = left.data();
 
     // TODO: Add parallel for

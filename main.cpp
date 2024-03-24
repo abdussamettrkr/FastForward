@@ -6,7 +6,7 @@ int main()
     core::Tensor input = core::Tensor::ones({1, 5, 5, 4});
     core::Tensor kernel = core::Tensor::zeros({8, 3, 3, 4});
     kernel = kernel + 1;
-    core::Tensor result = ops::conv2d(input, kernel);
+    core::Tensor result = input.max({0,2,3});
 
     std::cout << "<";
     for (auto item : result.shape())

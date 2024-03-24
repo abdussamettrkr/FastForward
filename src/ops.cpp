@@ -93,4 +93,35 @@ core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel){
     op.eval({input, kernel}, out);
     return out;
 }
+
+core::Tensor max(const core::Tensor&input, const std::vector<int>& axes ){
+    
+    core::Primitive* op;
+    core::Tensor* out;
+    //All reduce
+    if (input.is_contiguous() && (input.shape().size() == axes.size() || axes.size() == 0)){
+        op = new core::Max(ReductionType::ContiguousAllReduce, axes);
+        out = new core::Tensor({});
+    }
+    else{
+        op = new core::Max(ReductionType::ContiguousReduce, axes);
+        std::vector<int> out_shape;
+        for (size_t i =0; i < input.shape().size(); i++)
+        {
+            bool isIn = false;
+            for (auto axis: axes)
+            {
+                isIn = isIn | (i==axis);
+            }
+            
+            if (!isIn)
+                out_shape.push_back(input.shape()[i]);
+        }
+        
+        out = new core::Tensor(out_shape);
+    }
+
+    op->eval({input}, *out);
+    return *out;
+}
 }
