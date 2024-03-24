@@ -1,4 +1,5 @@
 #include "ops.hpp"
+#include "copy.hpp"
 
 
 namespace ops{
@@ -108,6 +109,28 @@ core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t str
     core::MaxPool2D op(kernel_size, stride);
     op.eval({input}, out);
     return out;
+}
+
+core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width){
+    if(input.shape().size() != pad_width.size()){
+        throw std::logic_error("Pad with size must match with input shape size");
+    }
+
+    std::vector<int> result_shape;
+    for (size_t i = 0; i < pad_width.size(); i++)
+    {
+        result_shape.push_back(input.shape()[i] + pad_width[i]*2);
+    }
+
+    auto result = core::Tensor(result_shape);
+    size_t offset = 0;
+    for (size_t i = 0; i < pad_width.size(); i++)
+    {
+        offset += pad_width[i] * result.strides()[i];
+    }
+    
+    copy(input.data(), result.data(), input.size(), 0, offset, input.shape(), result.strides());
+    return result;
 }
 
 core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, ReductionType type){

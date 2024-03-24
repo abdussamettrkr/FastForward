@@ -77,7 +77,7 @@ bool Tensor::operator==(const Tensor &other){
     
     for (size_t i = 0; i < storage->size; i++)
         if (std::abs(data()[i] - other.data()[i]) > EPSILON){
-            std::cout <<"wrong one iss:" <<i << std::endl;
+            std::cout <<"wrong one is:" <<i << std::endl;
             return false;
         }
             
