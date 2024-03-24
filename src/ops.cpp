@@ -94,6 +94,20 @@ core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel){
     return out;
 }
 
+core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t stride){
+    // TODO: Check shapes are compatiable
+    const std::vector<int>& inputShape = input.shape();
+
+    std::vector<int> outShape(inputShape.begin(), inputShape.end());
+    outShape[1] = (outShape[1] - (kernel_size-1) - 1) / stride + 1;
+    outShape[2] = (outShape[2] - (kernel_size-1) - 1) / stride + 1;
+
+    auto out = core::Tensor(outShape);
+    core::MaxPool2D op(kernel_size, stride);
+    op.eval({input}, out);
+    return out;
+}
+
 core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, ReductionType type){
     core::Primitive* op;
     core::Tensor* out;

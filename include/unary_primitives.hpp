@@ -23,6 +23,15 @@ class Convolution : public Primitive
         void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
+class MaxPool2D : public Primitive{
+    public:
+        MaxPool2D(size_t _kernel_size, size_t _stride): kernel_size(_kernel_size), stride(_stride) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+    private:
+        size_t kernel_size;
+        size_t stride;
+};
+
 class Reduce : public Primitive
 {
     public:
