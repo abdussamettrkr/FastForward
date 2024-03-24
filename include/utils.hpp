@@ -9,7 +9,14 @@ std::vector<int> calculateStride(const std::vector<int> shape);
 size_t loc(size_t idx, const std::vector<int> &shapes, const std::vector<int> &strides);
 
 
-enum ReductionType{
+enum ReductionMethod{
     ContiguousAllReduce,
     ContiguousReduce
+};
+
+enum ReductionType{
+    MAX,
+    SUM,
+    MIN,
+    PROD
 };

@@ -18,11 +18,10 @@ void reduce_contiguous_all(const core::Tensor& input, core::Tensor& out, float i
 template <typename Op>
 void reduce_contiguous_dim(const float *input_data, float *output_data, const std::vector<int> reduction_size, const std::vector<int> reduction_strides, size_t offset, size_t dim, Op op){
     
-    
-    if( reduction_size.size() == dim){
-        for (size_t i = 0; i < reduction_size[0]; i++)
+    if( reduction_size.size()-1 == dim){
+        for (size_t i = 0; i < reduction_size.back(); i++)
         {
-            op(output_data, input_data[offset + i * reduction_strides[0]]);
+            op(output_data, input_data[offset + i * reduction_strides.back()]);
         }
     }
     else{
@@ -37,22 +36,21 @@ void reduce_contiguous_dim(const float *input_data, float *output_data, const st
 
 template <typename Op>
 void reduce_contiguous(const core::Tensor& input, core::Tensor& out, std::vector<int> axes, float init_val, Op op){
-
     const std::vector<int>& in_shapes = input.shape();
     const std::vector<int>& in_strides = input.strides();
-    std::vector<int> reduce_size = {input.shape()[axes[0]]};
-    std::vector<int> reduce_strides = {input.strides()[axes[0]]};
+    std::vector<int> reduce_size = {in_shapes[axes[0]]};
+    std::vector<int> reduce_strides = {in_strides[axes[0]]};
     float *output_data = out.data();
 
     for (size_t i = 1; i < axes.size(); i++)
     {
         if(axes[i] -1 == axes[i-1]){
-            reduce_size.back() *= in_shapes[i];
-            reduce_strides.back() = in_strides[i];
+            reduce_size.back() *= in_shapes[axes[i]];
+            reduce_strides.back() = in_strides[axes[i]];
         }
         else{
-            reduce_size.push_back(in_shapes[i]);
-            reduce_strides.push_back(in_strides[i]);
+            reduce_size.push_back(in_shapes[axes[i]]);
+            reduce_strides.push_back(in_strides[axes[i]]);
         }
     }
     

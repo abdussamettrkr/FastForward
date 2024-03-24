@@ -97,6 +97,18 @@ Tensor Tensor::max(std::vector<int> axes){
     return ops::max(*this, axes);
 }
 
+Tensor Tensor::sum(std::vector<int> axes){
+    return ops::sum(*this, axes);
+}
+
+Tensor Tensor::prod(std::vector<int> axes){
+    return ops::prod(*this, axes);
+}
+
+Tensor Tensor::min(std::vector<int> axes){
+    return ops::min(*this, axes);
+}
+
 
 float& Tensor::operator[](int idx){
     return storage->data[idx];

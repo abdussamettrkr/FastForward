@@ -41,6 +41,9 @@ public:
     Tensor sqrt();
 
     Tensor max(std::vector<int> axes = {});
+    Tensor min(std::vector<int> axes = {});
+    Tensor prod(std::vector<int> axes = {});
+    Tensor sum(std::vector<int> axes = {});
 
     
     bool operator==(const Tensor &other);

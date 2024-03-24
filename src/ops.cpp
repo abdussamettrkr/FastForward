@@ -94,17 +94,18 @@ core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel){
     return out;
 }
 
-core::Tensor max(const core::Tensor&input, const std::vector<int>& axes ){
-    
+core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, ReductionType type){
     core::Primitive* op;
     core::Tensor* out;
+    ReductionMethod reduction_method;
+    std::vector<int> result_shape;
     //All reduce
     if (input.is_contiguous() && (input.shape().size() == axes.size() || axes.size() == 0)){
-        op = new core::Max(ReductionType::ContiguousAllReduce, axes);
-        out = new core::Tensor({});
+        reduction_method = ReductionMethod::ContiguousAllReduce;
+        result_shape = {};
     }
     else{
-        op = new core::Max(ReductionType::ContiguousReduce, axes);
+        reduction_method = ReductionMethod::ContiguousReduce;
         std::vector<int> out_shape;
         for (size_t i =0; i < input.shape().size(); i++)
         {
@@ -117,11 +118,41 @@ core::Tensor max(const core::Tensor&input, const std::vector<int>& axes ){
             if (!isIn)
                 out_shape.push_back(input.shape()[i]);
         }
-        
-        out = new core::Tensor(out_shape);
+        result_shape = out_shape;
     }
+
+    if(type == ReductionType::MAX){
+        op = new core::Max(reduction_method, axes);
+    }
+    else if(type==ReductionType::SUM){
+        op = new core::Sum(reduction_method, axes);
+    }
+    else if(type==ReductionType::MIN){
+        op = new core::Min(reduction_method, axes);
+    }
+    else if(type==ReductionType::PROD){
+        op = new core::Prod(reduction_method, axes);
+    }
+    out = new core::Tensor(result_shape);
+
 
     op->eval({input}, *out);
     return *out;
+}
+
+core::Tensor max(const core::Tensor&input, const std::vector<int>& axes){
+    return reduce(input, axes, ReductionType::MAX);
+}
+
+core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes){
+    return reduce(input, axes, ReductionType::SUM);
+}
+
+core::Tensor min(const core::Tensor&input, const std::vector<int>& axes){
+    return reduce(input, axes, ReductionType::MIN);
+}
+
+core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes){
+    return reduce(input, axes, ReductionType::PROD);
 }
 }

@@ -23,13 +23,36 @@ class Convolution : public Primitive
         void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
-class Max : public Primitive
+class Reduce : public Primitive
 {
     public:
-        Max(ReductionType _type, std::vector<int> _axes): type(_type), axes(_axes) {}
-        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
-    private:
-        ReductionType type;
+        Reduce(ReductionMethod _type, std::vector<int> _axes): type(_type), axes(_axes) {}
+    protected:
+        ReductionMethod type;
         std::vector<int> axes;
+};
+
+class Max : public Reduce{
+    public:
+        Max(ReductionMethod _type, std::vector<int> _axes) : Reduce(_type, _axes) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
+
+class Min : public Reduce{
+    public:
+        Min(ReductionMethod _type, std::vector<int> _axes) : Reduce(_type, _axes) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
+
+class Sum : public Reduce{
+    public:
+        Sum(ReductionMethod _type, std::vector<int> _axes) : Reduce(_type, _axes) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
+
+class Prod : public Reduce{
+    public:
+        Prod(ReductionMethod _type, std::vector<int> _axes) : Reduce(_type, _axes) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 }

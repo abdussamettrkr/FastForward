@@ -22,4 +22,7 @@ core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel);
 core::Tensor matmul(const core::Tensor& left, const core::Tensor& right);
 
 core::Tensor max(const core::Tensor&input, const std::vector<int>& axes);
+core::Tensor min(const core::Tensor&input, const std::vector<int>& axes);
+core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes);
+core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes);
 }

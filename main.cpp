@@ -6,7 +6,7 @@ int main()
     core::Tensor input = core::Tensor::ones({1, 5, 5, 4});
     core::Tensor kernel = core::Tensor::zeros({8, 3, 3, 4});
     kernel = kernel + 1;
-    core::Tensor result = input.max({0,2,3});
+    core::Tensor result = input.sum({0,2});
 
     std::cout << "<";
     for (auto item : result.shape())
