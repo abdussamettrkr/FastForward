@@ -40,10 +40,10 @@ public:
     Tensor log();
     Tensor sqrt();
 
-    Tensor max(std::vector<int> axes = {});
-    Tensor min(std::vector<int> axes = {});
-    Tensor prod(std::vector<int> axes = {});
-    Tensor sum(std::vector<int> axes = {});
+    Tensor max(std::vector<int> axes = {}, bool keepdims = false);
+    Tensor min(std::vector<int> axes = {}, bool keepdims = false);
+    Tensor prod(std::vector<int> axes = {}, bool keepdims = false);
+    Tensor sum(std::vector<int> axes = {}, bool keepdims = false);
 
     
     bool operator==(const Tensor &other);

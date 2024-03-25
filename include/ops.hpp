@@ -23,8 +23,8 @@ core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t str
 core::Tensor matmul(const core::Tensor& left, const core::Tensor& right);
 core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width);
 
-core::Tensor max(const core::Tensor&input, const std::vector<int>& axes);
-core::Tensor min(const core::Tensor&input, const std::vector<int>& axes);
-core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes);
-core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes);
+core::Tensor max(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
+core::Tensor min(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
+core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
+core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
 }

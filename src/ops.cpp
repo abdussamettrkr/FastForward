@@ -27,8 +27,6 @@ core::Tensor binary_op(const core::Tensor& left, const core::Tensor& right, core
 }
 
 
-
-
 core::Tensor add(const core::Tensor& left, const core::Tensor& right){
     // We are going to make it lazy
     core::Add op;
@@ -133,7 +131,7 @@ core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width){
     return result;
 }
 
-core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, ReductionType type){
+core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool keepdims, ReductionType type){
     core::Primitive* op;
     core::Tensor* out;
     ReductionMethod reduction_method;
@@ -156,6 +154,8 @@ core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, Redu
             
             if (!isIn)
                 out_shape.push_back(input.shape()[i]);
+            else if(keepdims)
+                out_shape.push_back(1);
         }
         result_shape = out_shape;
     }
@@ -179,19 +179,19 @@ core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, Redu
     return *out;
 }
 
-core::Tensor max(const core::Tensor&input, const std::vector<int>& axes){
-    return reduce(input, axes, ReductionType::MAX);
+core::Tensor max(const core::Tensor&input, const std::vector<int>& axes, bool keepdims){
+    return reduce(input, axes, keepdims, ReductionType::MAX);
 }
 
-core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes){
-    return reduce(input, axes, ReductionType::SUM);
+core::Tensor sum(const core::Tensor&input, const std::vector<int>& axes, bool keepdims){
+    return reduce(input, axes, keepdims, ReductionType::SUM);
 }
 
-core::Tensor min(const core::Tensor&input, const std::vector<int>& axes){
-    return reduce(input, axes, ReductionType::MIN);
+core::Tensor min(const core::Tensor&input, const std::vector<int>& axes, bool keepdims){
+    return reduce(input, axes, keepdims, ReductionType::MIN);
 }
 
-core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes){
-    return reduce(input, axes, ReductionType::PROD);
+core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes, bool keepdims){
+    return reduce(input, axes, keepdims, ReductionType::PROD);
 }
 }

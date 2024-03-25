@@ -93,20 +93,20 @@ Tensor Tensor::sqrt(){
 return ops::sqrt(*this);
 }
 
-Tensor Tensor::max(std::vector<int> axes){
-    return ops::max(*this, axes);
+Tensor Tensor::max(std::vector<int> axes, bool keepdims){
+    return ops::max(*this, axes, keepdims);
 }
 
-Tensor Tensor::sum(std::vector<int> axes){
-    return ops::sum(*this, axes);
+Tensor Tensor::sum(std::vector<int> axes, bool keepdims){
+    return ops::sum(*this, axes, keepdims);
 }
 
-Tensor Tensor::prod(std::vector<int> axes){
-    return ops::prod(*this, axes);
+Tensor Tensor::prod(std::vector<int> axes, bool keepdims){
+    return ops::prod(*this, axes, keepdims);
 }
 
-Tensor Tensor::min(std::vector<int> axes){
-    return ops::min(*this, axes);
+Tensor Tensor::min(std::vector<int> axes, bool keepdims){
+    return ops::min(*this, axes, keepdims);
 }
 
 
