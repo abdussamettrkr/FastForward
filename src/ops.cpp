@@ -66,6 +66,11 @@ core::Tensor exp(const core::Tensor& in){
     return unary_op(in, op);
 }
 
+core::Tensor relu(const core::Tensor& in){
+    core::Relu op;
+    return unary_op(in, op);
+}
+
 core::Tensor matmul(const core::Tensor& left, const core::Tensor& right){
     const std::vector<int>& leftShape = left.shape();
     const std::vector<int>& rightShape = right.shape();

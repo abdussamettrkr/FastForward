@@ -23,6 +23,10 @@ void Exp::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
     unary_array_iterator(inputs[0], out, [](float a) { return exp(a); });
 }
 
+void Relu::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
+    // Instead of float use scalar_dtype 
+    unary_array_iterator(inputs[0], out, [](float a) {return std::max(0.0f, a); });
+}
 
 void Max::eval(const std::vector<Tensor>& inputs, Tensor& out){
 
