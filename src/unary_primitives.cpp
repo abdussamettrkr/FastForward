@@ -2,6 +2,8 @@
 #include "unary_primitives.hpp"
 #include "iterator.hpp"
 #include "reduce.hpp"
+#include "ops.hpp"
+#include "copy.hpp"
 #include <cmath>
 #include <limits>
 
@@ -14,6 +16,11 @@ void Log::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
 void Sqrt::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
     // Instead of float use scalar_dtype 
     unary_array_iterator(inputs[0], out, [](float a) { return sqrt(a); });
+}
+
+void Exp::eval(const std::vector<core::Tensor>& inputs, core::Tensor& out){
+    // Instead of float use scalar_dtype 
+    unary_array_iterator(inputs[0], out, [](float a) { return exp(a); });
 }
 
 
@@ -55,6 +62,17 @@ void Prod::eval(const std::vector<Tensor>& inputs, Tensor& out){
     else if(type == ReductionMethod::ContiguousReduce){
         reduce_contiguous(inputs[0], out, axes, 1, [](float *a, float b) { *a = *a * b; });
     }
+}
+
+
+void Softmax::eval(const std::vector<Tensor>& inputs, Tensor& out){
+    auto input = inputs[0];
+    auto input_tensor = input - input.max({axis}, true);
+    auto e = ops::exp(input_tensor);
+    auto s = e.sum({axis}, true);
+    auto res = e / s;
+    // TODO: This should not be here!
+    copy(res.data(), out.data(), res.size(), 0, 0, out.shape(), out.strides());
 }
 
 }

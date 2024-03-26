@@ -24,7 +24,8 @@ bool checkBroadcastable(const std::vector<int>& t1Shape, const std::vector<int>&
     while (t2Dims.size() < t1Dims.size())
         t2Dims.insert(t2Dims.begin(), 1);
 
-    for (int i = 0; i < t1Dims.size() - 2; i++)
+
+    for (int i = 0; i < t1Dims.size(); i++)
     {
         if (t1Dims[i] != t2Dims[i] && (t1Dims[i] != 1 && t2Dims[i] != 1))
             return false;

@@ -17,6 +17,12 @@ class Sqrt : public Primitive
         void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
 };
 
+class Exp : public Primitive
+{
+    public:
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+};
+
 class Convolution : public Primitive
 {
     public:
@@ -33,6 +39,14 @@ class MaxPool2D : public Primitive{
     private:
         size_t kernel_size;
         size_t stride;
+};
+
+class Softmax : public Primitive{
+    public:
+        Softmax(int _axis): axis(_axis) {}
+        void eval(const std::vector<Tensor>& inputs, Tensor& out) override;
+    private:
+        int axis;
 };
 
 class Reduce : public Primitive

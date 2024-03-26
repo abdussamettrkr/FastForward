@@ -3,10 +3,10 @@
 
 int main()
 {
-    core::Tensor input = core::Tensor::ones({3, 3, 3});
+    core::Tensor input = core::Tensor::ones({5,2});
     core::Tensor kernel = core::Tensor::zeros({8, 3, 3, 4});
     kernel = kernel + 2;
-    core::Tensor result = ops::pad(input, {0,1,1});
+    core::Tensor result = ops::softmax(input, 0);
 
     std::cout << "<";
     for (auto item : result.shape())

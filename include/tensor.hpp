@@ -36,9 +36,6 @@ public:
     template <typename T>
     Tensor operator*(T value);
     Tensor operator*(const Tensor &other);
-    
-    Tensor log();
-    Tensor sqrt();
 
     Tensor max(std::vector<int> axes = {}, bool keepdims = false);
     Tensor min(std::vector<int> axes = {}, bool keepdims = false);

@@ -85,14 +85,6 @@ bool Tensor::operator==(const Tensor &other){
     return true;
 }
 
-Tensor Tensor::log(){
-return ops::log(*this);
-}
-
-Tensor Tensor::sqrt(){
-return ops::sqrt(*this);
-}
-
 Tensor Tensor::max(std::vector<int> axes, bool keepdims){
     return ops::max(*this, axes, keepdims);
 }

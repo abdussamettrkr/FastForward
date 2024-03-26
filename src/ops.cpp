@@ -61,6 +61,11 @@ core::Tensor sqrt(const core::Tensor& in){
     return unary_op(in, op);
 }
 
+core::Tensor exp(const core::Tensor& in){
+    core::Exp op;
+    return unary_op(in, op);
+}
+
 core::Tensor matmul(const core::Tensor& left, const core::Tensor& right){
     const std::vector<int>& leftShape = left.shape();
     const std::vector<int>& rightShape = right.shape();
@@ -131,6 +136,17 @@ core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width){
     return result;
 }
 
+core::Tensor softmax(const core::Tensor& input, int axis){
+    if(axis < 0)
+        axis = input.ndim() + axis;
+    
+    auto out = new core::Tensor(input.shape());
+    
+    core::Softmax op(axis);
+    op.eval({input}, *out);
+    return *out;
+}
+
 core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool keepdims, ReductionType type){
     core::Primitive* op;
     core::Tensor* out;
@@ -139,7 +155,12 @@ core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool
     //All reduce
     if (input.is_contiguous() && (input.shape().size() == axes.size() || axes.size() == 0)){
         reduction_method = ReductionMethod::ContiguousAllReduce;
-        result_shape = {};
+        if (!keepdims)
+            result_shape = {};
+        else{
+            for (size_t i = 0; i < input.shape().size(); i++)
+                result_shape.push_back(1);
+        }
     }
     else{
         reduction_method = ReductionMethod::ContiguousReduce;
