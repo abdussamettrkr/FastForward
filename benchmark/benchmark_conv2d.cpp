@@ -13,7 +13,7 @@ int main()
     std::vector<std::vector<int>> cases;
     std::vector<std::string> header = {"H", "W", "In_c", "Out_c", "K_size", "B_size"};
     std::vector<double> elapsed_times;
-    cases.push_back({32, 16, 3, 8, 3, 8});
+    cases.push_back({32, 32, 3, 8, 3, 8});
     cases.push_back({32, 16, 8, 32, 3, 8});
     cases.push_back({224, 224, 8, 32, 3, 8});
     cases.push_back({32, 16, 8, 32, 5, 8});
@@ -46,7 +46,7 @@ double run(int h, int w, int in_c, int out_c, int k_size, int b_size)
         {
             if (out.data()[i] != k_size * k_size * in_c)
             {
-                throw std::logic_error("");
+                                throw std::logic_error("");
             }
         }
     }
@@ -66,7 +66,7 @@ double run(int h, int w, int in_c, int out_c, int k_size, int b_size)
 
 void print_results(std::vector<std::string> header, std::vector<std::vector<int>> cases, std::vector<double> results)
 {
-    for (auto item : header)
+        for (auto item : header)
     {
         std::cout << padResult(item) << ", ";
     }
