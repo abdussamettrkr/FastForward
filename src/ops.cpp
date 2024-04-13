@@ -153,7 +153,7 @@ core::Tensor softmax(const core::Tensor& input, int axis){
 }
 
 core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool keepdims, ReductionType type){
-    core::Primitive* op;
+    core::Primitive* op = nullptr;
     core::Tensor* out;
     ReductionMethod reduction_method;
     std::vector<int> result_shape;
@@ -170,7 +170,7 @@ core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool
     else{
         reduction_method = ReductionMethod::ContiguousReduce;
         std::vector<int> out_shape;
-        for (size_t i =0; i < input.shape().size(); i++)
+        for (int i =0; i < input.shape().size(); i++)
         {
             bool isIn = false;
             for (auto axis: axes)
@@ -185,7 +185,7 @@ core::Tensor reduce(const core::Tensor&input, const std::vector<int>& axes, bool
         }
         result_shape = out_shape;
     }
-
+    
     if(type == ReductionType::MAX){
         op = new core::Max(reduction_method, axes);
     }
