@@ -1,15 +1,8 @@
 #include "unary_primitives.hpp"
 #include "utils.hpp"
+#include "conv.hpp"
 #include <arm_neon.h>
-void direct_conv2d(const core::Tensor &input, const core::Tensor &kernel, core::Tensor &out, size_t stride);
-void conv2d_neon(const float *input, const float *kernel, float *output, size_t stride,
-                 const std::vector<int> outShape, const std::vector<int> kernelShape,
-                 const std::vector<int> inStrides, const std::vector<int> kernelStrides,
-                 const std::vector<int> outStrides);
-void conv2d(const float *input, const float *kernel, float *output, size_t stride,
-            const std::vector<int> outShape, const std::vector<int> kernelShape,
-            const std::vector<int> inStrides, const std::vector<int> kernelStrides,
-            const std::vector<int> outStrides);
+
 
 namespace core
 {
@@ -133,6 +126,42 @@ void conv2d(const float *input, const float *kernel, float *output, size_t strid
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+void im2col(float *input, float *output, size_t iW, size_t iH, size_t oH, size_t oW, size_t kH, size_t kW, size_t nChannel, size_t stride_h, size_t stride_w)
+{
+    for (size_t output_y = 0; output_y < oH; output_y++)
+    {
+        for (size_t output_x = 0; output_x < oW; output_x++)
+        {
+            for (size_t kernel_y = 0; kernel_y < kH; kernel_y++)
+            {
+                const size_t input_y = output_y + kernel_y;
+                if (input_y < iH)
+                {
+                    for (size_t kernel_x = 0; kernel_x < kW; kernel_x++)
+                    {
+                        const size_t input_x = output_x + kernel_x;
+                        if (input_x < iW)
+                        {
+                            memcpy(output, input + (input_y * stride_h + input_x) * stride_w, nChannel* sizeof(float));
+                            std::cout << *(input + (input_y * stride_h + input_x) * stride_w)<<"|"<< *output<<std::endl;
+                        }
+                        else
+                        {
+                            memset(output, 0, nChannel);
+                        }
+                        output = output + nChannel;
+                    }
+                }
+                else
+                {
+                    memset(output, 0, kW * nChannel);
+                    output = output + kW * nChannel;
                 }
             }
         }
