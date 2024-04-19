@@ -119,6 +119,68 @@ core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t str
     return out;
 }
 
+core::Tensor im2col(const core::Tensor& input, size_t kernel_h, size_t kernel_w, size_t padding, size_t stride){
+    if(padding != 0){
+        throw std::logic_error("Currently im2col only supports padding=0");
+    }
+    if(stride != 1){
+        throw std::logic_error("Currently im2col only supports stride=1");
+    }
+    std::vector<int> inShapes = input.shape();
+    std::vector<int> inStrides = input.strides();
+    int nB = inShapes[0];
+    int iH = inShapes[1];
+    int iW = inShapes[2];
+    int nC = inShapes[3];
+    int inStrideH = inStrides[1];
+    int inStrideW = inStrides[2];
+
+    if(nB != 1){
+        throw std::logic_error("Currently im2col only supports batchsize=1");
+    }
+
+    int oH = (iH - kernel_h) / stride + 1;
+    int oW = (iW - kernel_w) / stride + 1;
+
+    auto out  = core::Tensor({static_cast<int>(nC*kernel_h*kernel_w), static_cast<int>(oH*oW)});
+    const float *inData = input.data();
+    float *outData = out.data();
+
+    for (size_t output_y = 0; output_y < oH; output_y++)
+    {
+        for (size_t output_x = 0; output_x < oW; output_x++)
+        {
+            for (size_t kernel_y = 0; kernel_y < kernel_h; kernel_y++)
+            {
+                const size_t input_y = output_y + kernel_y;
+                if (input_y < iH)
+                {
+                    for (size_t kernel_x = 0; kernel_x < kernel_w; kernel_x++)
+                    {
+                        const size_t input_x = output_x + kernel_x;
+                        if (input_x < iW)
+                        {
+                            memcpy(outData, inData + (input_y * inStrideH + input_x) * inStrideW, nC* sizeof(float));
+                            std::cout << *(inData + (input_y * inStrideH + input_x) * inStrideW)<<"|"<< *outData<<std::endl;
+                        }
+                        else
+                        {
+                            memset(outData, 0, nC);
+                        }
+                        outData = outData + nC;
+                    }
+                }
+                else
+                {
+                    memset(outData, 0, kernel_w * nC);
+                    outData = outData + kernel_w * nC;
+                }
+            }
+        }
+    }
+    return out;
+}
+
 core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width){
     if(input.shape().size() != pad_width.size()){
         throw std::logic_error("Pad with size must match with input shape size");
