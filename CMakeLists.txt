@@ -18,16 +18,16 @@ target_include_directories(bench_conv2d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/incl
 add_executable(conv2dtest tests/test_conv2d.cpp src/tensor.cpp src/utils.cpp src/binary_primitives.cpp src/unary_primitives.cpp src/matmul.cpp src/conv.cpp src/ops.cpp src/maxpool.cpp  src/copy.cpp)
 target_include_directories(conv2dtest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# add_executable(tensor_test tests/test_matmul.cpp src/tensor.cpp src/utils.cpp src/binary_primitives.cpp src/unary_primitives.cpp src/matmul.cpp src/conv.cpp src/ops.cpp src/maxpool.cpp  src/copy.cpp)
-# target_include_directories(tensor_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(matmultest tests/test_matmul.cpp src/tensor.cpp src/utils.cpp src/binary_primitives.cpp src/unary_primitives.cpp src/matmul.cpp src/conv.cpp src/ops.cpp src/maxpool.cpp  src/copy.cpp)
+target_include_directories(matmultest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add_executable(broadcast_test tests/test_broadcast_shape.cpp src/utils.cpp src/tensor.cpp src/binary_primitives.cpp src/unary_primitives.cpp src/matmul.cpp src/conv.cpp src/ops.cpp src/maxpool.cpp  src/copy.cpp)
 # target_include_directories(broadcast_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# add_test(
-# NAME tensor_test
-# COMMAND $<TARGET_FILE:tensor_test>
-# )
+add_test(
+NAME matmultest
+COMMAND $<TARGET_FILE:matmultest>
+)
 
 add_test(
 NAME conv2dtest
