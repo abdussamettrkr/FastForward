@@ -160,8 +160,7 @@ core::Tensor im2col(const core::Tensor& input, size_t kernel_h, size_t kernel_w,
                         const size_t input_x = output_x + kernel_x;
                         if (input_x < iW)
                         {
-                            memcpy(outData, inData + (input_y * inStrideH + input_x) * inStrideW, nC* sizeof(float));
-                            std::cout << *(inData + (input_y * inStrideH + input_x) * inStrideW)<<"|"<< *outData<<std::endl;
+                            memcpy(outData, inData + input_y * inStrideH + input_x * inStrideW, nC* sizeof(float));
                         }
                         else
                         {

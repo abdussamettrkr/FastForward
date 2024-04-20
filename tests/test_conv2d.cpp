@@ -3,32 +3,37 @@
 
 using namespace core;
 
-bool test_im2col()
+bool test_im2col(const core::Tensor &input, const float expected[], size_t kH, size_t kW, size_t stride)
 {
-    const size_t inH = 4;
-    const size_t inW = 4;
-    const size_t inC = 1;
 
-    const size_t kH = 2;
-    const size_t kW = 2;
+    auto inShape = input.shape();
 
-    const size_t stride_h = 1;
-    const size_t stride_w = 1;
-    const size_t outH = (inH - kH) / stride_h + 1;
-    const size_t outW = (inW - kW) / stride_w + 1;
+    const size_t outH = (inShape[1] - kH) / stride + 1;
+    const size_t outW = (inShape[2] - kW) / stride + 1;
+    auto result = ops::im2col(input, kH, kW, 0, stride);
+    auto resultData = result.data();
 
-    float inputData[inH * inW * inC] = {
+    const size_t outputSize = outH * outW * kH * kW * inShape[3];
+
+    for (size_t i = 0; i < outputSize; ++i)
+    {
+        if (resultData[i] != expected[i])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool im2col_test_1()
+{
+    float inputData[] = {
         1, 2, 3, 4,
         5, 6, 7, 8,
         9, 10, 11, 12,
         13, 14, 15, 16};
 
-    auto input = core::Tensor({1, inH, inW, inC}, {inC * inW * inH, inC * inW, inC, 1}, inputData);
-
-    auto result = ops::im2col(input, kH, kW, 0, 1);
-
-    const size_t outputSize = outH * outW * kH * kW * inC;
-    float expectedOutput[outputSize] = {
+    float expectedOutput[] = {
         1, 2, 5, 6,
         2, 3, 6, 7,
         3, 4, 7, 8,
@@ -39,18 +44,40 @@ bool test_im2col()
         10, 11, 14, 15,
         11, 12, 15, 16};
 
-    float *output = result.data();
-    for (size_t i = 0; i < outputSize; ++i)
-    {
-        if (output[i] != expectedOutput[i])
-        {
-            return true;
-        }
-    }
-    return false;
+    // Create input tensor
+    auto input = core::Tensor({1, 4, 4, 1}, {16, 4, 1, 1}, inputData);
+
+    return test_im2col(input, expectedOutput, 2, 2, 1);
+}
+
+bool im2col_test_2()
+{
+
+    float inputData[] = {
+        1, 2, 3, 4, 17, 18, 19, 20,
+        5, 6, 7, 8, 21, 22, 23, 24,
+        9, 10, 11, 12, 25, 26, 27, 28,
+        13, 14, 15, 16, 29, 30, 31, 32};
+    float expectedOutput[] = {
+        1, 2, 3, 4, 5, 6, 7, 8,
+        3, 4, 17, 18, 7, 8, 21, 22,
+        17, 18, 19, 20, 21, 22, 23, 24,
+        5, 6, 7, 8, 9, 10, 11, 12,
+        7, 8, 21, 22, 11, 12, 25, 26,
+        21, 22, 23, 24, 25, 26, 27, 28,
+        9, 10, 11, 12, 13, 14, 15, 16,
+        11, 12, 25, 26, 15, 16, 29, 30,
+        25, 26, 27, 28, 29, 30, 31, 32};
+
+    // Create input tensor
+    auto input = core::Tensor({1, 4, 4, 2}, {32, 8, 2, 1}, inputData);
+
+    return test_im2col(input, expectedOutput, 2, 2, 1);
 }
 
 int main()
 {
-    return test_im2col();
+    bool res1 = im2col_test_1();
+    bool res2 = im2col_test_2();
+    return res1 | res2;
 }
