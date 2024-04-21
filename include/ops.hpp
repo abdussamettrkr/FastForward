@@ -28,6 +28,9 @@ core::Tensor matmul(const core::Tensor& left, const core::Tensor& right);
 core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width);
 core::Tensor softmax(const core::Tensor& input, int axis = -1);
 
+// Shape ops
+core::Tensor flatten(const core::Tensor& input, size_t start_dim, size_t end_dim);
+
 core::Tensor max(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
 core::Tensor min(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);
 core::Tensor prod(const core::Tensor&input, const std::vector<int>& axes, bool keepdims);

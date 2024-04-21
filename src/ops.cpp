@@ -202,6 +202,31 @@ core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width){
     return result;
 }
 
+core::Tensor flatten(const core::Tensor& input, size_t start_dim, size_t end_dim){
+    auto inShape = input.shape();
+    std::vector<int> outShape;
+    int accumulated = 1;
+    for (size_t i = 0; i < inShape.size(); i++)
+    {
+        if(i >= start_dim && i <= end_dim){
+            accumulated *= inShape[i];
+            if (i == end_dim)
+                outShape.push_back(accumulated);
+        }
+        else{
+            outShape.push_back(inShape[i]);
+        }
+    }
+
+    // TODO: This should be something like copyconstructor?
+    float *outData = new float[input.size()];
+    
+    memcpy(outData, input.data(), input.size() * sizeof(float));
+
+
+    return core::Tensor(outShape, outData);
+}
+
 core::Tensor softmax(const core::Tensor& input, int axis){
     if(axis < 0)
         axis = input.ndim() + axis;
