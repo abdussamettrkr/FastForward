@@ -47,6 +47,8 @@ public:
     float& operator[](int index);
 
     Tensor matmul(const Tensor &other);
+    Tensor flatten(size_t start_dim, size_t end_dim);
+
     float *data() const;
     float *data();
     int size() const;

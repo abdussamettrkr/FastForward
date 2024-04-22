@@ -138,7 +138,11 @@ throw std::logic_error("Not implemented");
 
 Tensor Tensor::matmul(const Tensor &other)
 {
-    return ops::matmul(*this, other);
+    return ops::matmul(*this, other, false);
+}
+
+Tensor Tensor::flatten(size_t start_dim, size_t end_dim){
+    return ops::flatten(*this, start_dim, end_dim);
 }
 
 }

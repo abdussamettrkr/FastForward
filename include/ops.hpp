@@ -24,7 +24,7 @@ core::Tensor relu(const core::Tensor& in);
 core::Tensor conv2d(const core::Tensor& input, const core::Tensor& kernel, size_t stride=1);
 core::Tensor im2col(const core::Tensor& input, size_t kernel_h, size_t kernel_w, size_t padding, size_t stride);
 core::Tensor maxpool2d(const core::Tensor& input, size_t kernel_size, size_t stride);
-core::Tensor matmul(const core::Tensor& left, const core::Tensor& right);
+core::Tensor matmul(const core::Tensor& left, const core::Tensor& right, bool is_transposed=false);
 core::Tensor pad(const core::Tensor& input, std::vector<int> pad_width);
 core::Tensor softmax(const core::Tensor& input, int axis = -1);
 
