@@ -141,7 +141,7 @@ Tensor Tensor::matmul(const Tensor &other)
     return ops::matmul(*this, other, false);
 }
 
-Tensor Tensor::flatten(size_t start_dim, size_t end_dim){
+Tensor Tensor::flatten(size_t start_dim, size_t end_dim) const{
     return ops::flatten(*this, start_dim, end_dim);
 }
 

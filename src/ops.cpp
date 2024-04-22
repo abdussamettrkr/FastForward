@@ -87,8 +87,11 @@ namespace ops
         std::vector<int> rightBaseShape(rightShape.begin(), rightShape.end() - 2);
 
         auto outShape = broadcastShapes(leftBaseShape, rightBaseShape);
-        outShape.push_back(left.shape()[left.ndim() - 2]);
-        outShape.push_back(right.shape()[right.ndim() - 1]);
+        outShape.push_back(leftShape[leftShape.size() - 2]);
+        if(!is_transposed)
+            outShape.push_back(rightShape.back());
+        else
+            outShape.push_back(rightShape[rightShape.size() - 2]);
 
         auto out = core::Tensor(outShape);
 
@@ -151,15 +154,13 @@ namespace ops
         int oH = (iH - kernel_h) / stride + 1;
         int oW = (iW - kernel_w) / stride + 1;
 
-        auto out = core::Tensor({nB, static_cast<int>(oH * oW), static_cast<int>(nC * kernel_h * kernel_w),});
+        auto out =  core::Tensor({nB, static_cast<int>(oH * oW), static_cast<int>(nC * kernel_h * kernel_w)});
         auto outStrides = out.strides();
         const float *inData = input.data();
         float *outData = out.data();
 
         for (size_t B = 0; B < nB; B++)
         {
-            inData = inData + B * inStrides[0];
-            outData = outData + B * outStrides[0];
 
             for (size_t output_y = 0; output_y < oH; output_y++)
             {
