@@ -13,17 +13,17 @@ int main()
     std::vector<std::vector<int>> cases;
     std::vector<std::string> header = {"H", "W", "In_c", "Out_c", "K_size", "B_size"};
     std::vector<double> elapsed_times;
-    cases.push_back({32, 32, 3, 8, 3, 1});
-    cases.push_back({32, 16, 8, 32, 3, 1});
-    cases.push_back({224, 224, 8, 32, 3, 1});
-    cases.push_back({32, 16, 8, 32, 5, 1});
-    cases.push_back({224, 224, 8, 32, 5, 1});
-    cases.push_back({32, 32, 8, 32, 3, 1});
-    cases.push_back({32, 32, 32, 32, 3, 1});
-    cases.push_back({32, 32, 128, 32, 3, 1});
-    cases.push_back({32, 32, 32, 128, 3, 1});
-    cases.push_back({32, 32, 64, 64, 3, 1});
-    cases.push_back({32, 32, 128, 128, 3, 1});
+    cases.push_back({32, 32, 3, 8, 3, 8});
+    cases.push_back({32, 16, 8, 32, 3, 8});
+    cases.push_back({224, 224, 8, 32, 3, 8});
+    cases.push_back({32, 16, 8, 32, 5, 8});
+    cases.push_back({224, 224, 8, 32, 5, 8});
+    cases.push_back({32, 32, 8, 32, 3, 8});
+    cases.push_back({32, 32, 32, 32, 3, 8});
+    cases.push_back({32, 32, 128, 32, 3, 8});
+    cases.push_back({32, 32, 32, 128, 3, 8});
+    cases.push_back({32, 32, 64, 64, 3, 8});
+    cases.push_back({32, 32, 128, 128, 3, 8});
 
     for (auto sc : cases)
     {
