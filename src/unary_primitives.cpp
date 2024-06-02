@@ -70,10 +70,11 @@ void Prod::eval(const std::vector<Tensor>& inputs, Tensor& out){
 
 
 void Softmax::eval(const std::vector<Tensor>& inputs, Tensor& out){
-    auto input = inputs[0];
-    auto input_tensor = input - input.max({axis}, true);
-    auto e = ops::exp(input_tensor);
-    auto s = e.sum({axis}, true);
+    auto& input = inputs[0];
+    auto _input(input);
+    auto input_tensor = _input - _input.max({axis}, true);
+    auto e = std::move(ops::exp(input_tensor));
+    auto s = std::move(e.sum({axis}, true));
     auto res = e / s;
     // TODO: This should not be here!
     copy(res.data(), out.data(), res.size(), 0, 0, out.shape(), out.strides());

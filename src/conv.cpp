@@ -4,26 +4,27 @@
 #include "ops.hpp"
 #include <arm_neon.h>
 
-
 namespace core
 {
 
     void Convolution::eval(const std::vector<core::Tensor> &inputs, core::Tensor &out)
     {
 
-        direct_conv2d(inputs[0], inputs[1], out, stride);
+        gemm_conv2d(inputs[0], inputs[1], out, stride);
     }
 }
 
-
-void gemm_conv2d(const core::Tensor &input, const core::Tensor &kernel, core::Tensor &out, size_t stride){
+void gemm_conv2d(const core::Tensor &input, const core::Tensor &kernel, core::Tensor &out, size_t stride)
+{
     const std::vector<int> kShape = kernel.shape();
     core::Tensor colImg = ops::im2col(input, kShape[1], kShape[2], 0, stride);
     core::Tensor kernelFlat = kernel.flatten(1, 3);
-    auto result1 = ops::matmul(colImg, kernelFlat, true);
+    kernelFlat = kernelFlat.transpose();
+    auto result1 = ops::matmul(colImg, kernelFlat);
+
     auto outShape = out.shape();
     auto resultShape = result1.shape();
-    memcpy(out.data(), result1.data(), result1.size()* sizeof(float));   
+    memcpy(out.data(), result1.data(), result1.size() * sizeof(float));
 }
 
 void direct_conv2d(const core::Tensor &input, const core::Tensor &kernel, core::Tensor &out, size_t stride)

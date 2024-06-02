@@ -13,17 +13,17 @@ int main()
     std::vector<std::vector<int>> cases;
     std::vector<std::string> header = {"H", "W", "In_c", "Out_c", "K_size", "B_size"};
     std::vector<double> elapsed_times;
-    cases.push_back({32, 32, 3, 8, 3, 8});
-    cases.push_back({32, 16, 8, 32, 3, 8});
-    cases.push_back({224, 224, 8, 32, 3, 8});
-    cases.push_back({32, 16, 8, 32, 5, 8});
-    cases.push_back({224, 224, 8, 32, 5, 8});
-    cases.push_back({32, 32, 8, 32, 3, 8});
-    cases.push_back({32, 32, 32, 32, 3, 8});
-    cases.push_back({32, 32, 128, 32, 3, 8});
-    cases.push_back({32, 32, 32, 128, 3, 8});
-    cases.push_back({32, 32, 64, 64, 3, 8});
-    cases.push_back({32, 32, 128, 128, 3, 8});
+    cases.push_back({32, 32, 3, 8, 3, 1});
+    cases.push_back({32, 16, 8, 32, 3, 1});
+    cases.push_back({224, 224, 8, 32, 3, 1});
+    cases.push_back({32, 16, 8, 32, 5, 1});
+    cases.push_back({224, 224, 8, 32, 5, 1});
+    cases.push_back({32, 32, 8, 32, 3, 1});
+    cases.push_back({32, 32, 32, 32, 3, 1});
+    cases.push_back({32, 32, 128, 32, 3, 1});
+    cases.push_back({32, 32, 32, 128, 3, 1});
+    cases.push_back({32, 32, 64, 64, 3, 1});
+    cases.push_back({32, 32, 128, 128, 3, 1});
 
     for (auto sc : cases)
     {
@@ -42,15 +42,14 @@ double run(int h, int w, int in_c, int out_c, int k_size, int b_size)
     for (size_t i = 0; i < 3; i++)
     {
         core::Tensor out = ops::conv2d(inp, kernel);
-        for (size_t i = 0; i < out.size(); i++)
+        for (int i = 0; i < out.size(); i++)
         {
             if (out.data()[i] != k_size * k_size * in_c)
             {
-                                throw std::logic_error("");
+                throw std::logic_error("No No No");
             }
         }
     }
-
 
     auto start_time = std::chrono::steady_clock::now();
 
@@ -66,7 +65,7 @@ double run(int h, int w, int in_c, int out_c, int k_size, int b_size)
 
 void print_results(std::vector<std::string> header, std::vector<std::vector<int>> cases, std::vector<double> results)
 {
-        for (auto item : header)
+    for (auto item : header)
     {
         std::cout << padResult(item) << ", ";
     }

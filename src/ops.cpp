@@ -93,7 +93,7 @@ namespace ops
         else
             outShape.push_back(rightShape[rightShape.size() - 2]);
 
-        auto out = core::Tensor(outShape);
+        auto out = core::Tensor::zeros(outShape);
 
         core::Matmul op(is_transposed);
         op.eval({left, right}, out);
